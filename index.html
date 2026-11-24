@@ -1,0 +1,4189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CycleSquad — Open-World Pixels Sustainability RPG</title>
+<meta name="description" content="CycleSquad — an endless Pokémon FireRed-style open-world pixel-art sustainability RPG and waste-sorting arcade game." />
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #2b1d14;
+    --wood-dark: #5c3824;
+    --wood-mid: #8c583a;
+    --wood-light: #b87a4b;
+    --parchment: #f7efd8;
+    --parchment-dark: #e6d5b0;
+    --grass-light: #7bc950;
+    --grass-dark: #63b33b;
+  }
+
+  * {
+    box-sizing: border-box;
+    image-rendering: pixelated;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #5ea838;
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+    user-select: none;
+  }
+
+  .font-pixel {
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 0.02em;
+  }
+
+  .font-silk {
+    font-family: 'Silkscreen', monospace;
+  }
+
+  .num { font-variant-numeric: tabular-nums; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; }
+
+  /* Pixels.xyz Chunky Wood & Parchment RPG Frames */
+  .rpg-wood-frame {
+    background: linear-gradient(180deg, #9e6340 0%, #824e30 100%);
+    border: 4px solid #2b1d14;
+    box-shadow:
+      inset 0 3px 0 #c98a5b,
+      inset 0 -4px 0 #59331d,
+      0 6px 0 rgba(43, 29, 20, 0.45);
+    border-radius: 14px;
+  }
+
+  .rpg-parchment {
+    background: var(--parchment);
+    border: 3px solid #2b1d14;
+    box-shadow:
+      inset 0 3px 0 #fffaf0,
+      inset 0 -3px 0 #d9c59a,
+      0 4px 0 rgba(43, 29, 20, 0.35);
+    border-radius: 12px;
+    color: var(--ink);
+  }
+
+  .rpg-parchment-sub {
+    background: var(--parchment-dark);
+    border: 3px solid #4a3222;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.45);
+    border-radius: 10px;
+  }
+
+  .rpg-plaque {
+    background: #f5ebd1;
+    border: 3px solid #2b1d14;
+    box-shadow:
+      inset 0 2px 0 #ffffff,
+      inset 0 -3px 0 #d2be94,
+      0 4px 0 #2b1d14;
+    border-radius: 10px;
+  }
+
+  /* Pixels.xyz Chunky Beveled Action Buttons */
+  .rpg-btn-green {
+    background: linear-gradient(180deg, #6ee755 0%, #46b832 100%);
+    border: 3px solid #2b1d14;
+    color: #183610;
+    box-shadow:
+      inset 0 3px 0 #a9f797,
+      inset 0 -4px 0 #2c821d,
+      0 5px 0 #2b1d14;
+    transition: transform 0.06s steps(2), filter 0.1s;
+    cursor: pointer;
+  }
+  .rpg-btn-green:hover:not(:disabled) {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+  }
+  .rpg-btn-green:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow:
+      inset 0 2px 0 #2c821d,
+      0 1px 0 #2b1d14;
+  }
+  .rpg-btn-green:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .rpg-btn-gold {
+    background: linear-gradient(180deg, #ffe054 0%, #f5b418 100%);
+    border: 3px solid #2b1d14;
+    color: #3d2405;
+    box-shadow:
+      inset 0 3px 0 #fff29c,
+      inset 0 -4px 0 #c28208,
+      0 4px 0 #2b1d14;
+    transition: transform 0.06s steps(2);
+    cursor: pointer;
+  }
+  .rpg-btn-gold:hover:not(:disabled) { filter: brightness(1.05); transform: translateY(-1px); }
+  .rpg-btn-gold:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 #2b1d14; }
+
+  .rpg-btn-blue {
+    background: linear-gradient(180deg, #67d1ff 0%, #2a9df4 100%);
+    border: 3px solid #2b1d14;
+    color: #0d2b45;
+    box-shadow:
+      inset 0 3px 0 #b8ebff,
+      inset 0 -4px 0 #186eb5,
+      0 4px 0 #2b1d14;
+    cursor: pointer;
+  }
+  .rpg-btn-blue:active { transform: translateY(3px); box-shadow: 0 1px 0 #2b1d14; }
+
+  .rpg-btn-red {
+    background: linear-gradient(180deg, #ff6b7a 0%, #e11d48 100%);
+    border: 3px solid #2b1d14;
+    color: #fff5f5;
+    box-shadow:
+      inset 0 3px 0 #ffa8b3,
+      inset 0 -4px 0 #9f1239,
+      0 5px 0 #2b1d14;
+    transition: transform 0.06s steps(2), filter 0.1s;
+    cursor: pointer;
+  }
+  .rpg-btn-red:hover:not(:disabled) { filter: brightness(1.06); }
+  .rpg-btn-red:active:not(:disabled),
+  .rpg-btn-red.recording {
+    transform: translateY(4px);
+    box-shadow: inset 0 2px 0 #9f1239, 0 1px 0 #2b1d14;
+    filter: brightness(1.15);
+  }
+
+  /* Pixels.xyz Tab Bar */
+  .rpg-tab {
+    background: #6e4229;
+    border: 3px solid #2b1d14;
+    border-bottom: none;
+    color: #f3dec0;
+    border-radius: 10px 10px 0 0;
+    padding: 0.5rem 0.85rem;
+    font-family: 'Silkscreen', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    box-shadow: inset 0 2px 0 #8f593a;
+    transition: all 0.08s steps(2);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  @media (min-width: 640px) {
+    .rpg-tab {
+      padding: 0.55rem 0.9rem;
+      font-size: 12px;
+    }
+  }
+  .rpg-tab:hover {
+    background: #875234;
+    color: #ffffff;
+  }
+  .rpg-tab[aria-selected="true"] {
+    background: var(--parchment);
+    color: #2b1d14;
+    box-shadow: inset 0 3px 0 #ffffff;
+    transform: translateY(2px);
+    z-index: 10;
+  }
+
+  /* Open-World Biome Selector Pills */
+  .biome-pill {
+    background: #5c3824;
+    border: 2px solid #2b1d14;
+    color: #f3dec0;
+    border-radius: 8px;
+    padding: 0.3rem 0.65rem;
+    font-family: 'Silkscreen', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.08s steps(2);
+  }
+  .biome-pill:hover { background: #75482f; color: #fff; }
+  .biome-pill.active {
+    background: #ffe054;
+    color: #2b1d14;
+    box-shadow: inset 0 2px 0 #fff7b2, 0 2px 0 #2b1d14;
+  }
+
+  /* Bottom RPG Inventory Hotbar Slots (Bins & Loot) */
+  .inv-slot {
+    background: #d8c298;
+    border: 3px solid #2b1d14;
+    box-shadow:
+      inset 3px 3px 0 #b0986d,
+      inset -3px -3px 0 #f5e8cc,
+      0 4px 0 #2b1d14;
+    border-radius: 10px;
+    transition: transform 0.08s steps(2), background-color 0.1s;
+  }
+  .inv-slot:hover {
+    background: #fff3d6;
+    transform: translateY(-3px);
+  }
+  .inv-slot:active {
+    transform: translateY(2px);
+    box-shadow: inset 3px 3px 0 #9e865c, 0 1px 0 #2b1d14;
+  }
+  .inv-slot.over {
+    background: #fef08a;
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 0 0 3px #f59e0b, 0 4px 0 #2b1d14;
+  }
+
+  .squad-card {
+    background: #e6d5b0;
+    border: 3px solid #4a3222;
+    border-radius: 10px;
+    padding: 0.6rem;
+    font-family: 'Silkscreen', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #2b1d14;
+    cursor: pointer;
+    transition: 0.08s steps(2);
+  }
+  .squad-card:hover { background: #f2e5c6; }
+  .squad-card.on {
+    background: #a9f797;
+    border-color: #2b1d14;
+    box-shadow: inset 0 2px 0 #ffffff, 0 3px 0 #2b1d14;
+  }
+
+  /* 48px Touch-Friendly D-Pad Buttons */
+  .dpad-btn {
+    background: linear-gradient(180deg, #f5ebd1 0%, #d8c298 100%);
+    border: 3px solid #2b1d14;
+    box-shadow: inset 0 2px 0 #ffffff, 0 3px 0 #2b1d14;
+    border-radius: 12px;
+    color: #2b1d14;
+    font-family: 'Press Start 2P', monospace;
+    display: grid;
+    place-items: center;
+    touch-action: none;
+    cursor: pointer;
+  }
+  .dpad-btn:active, .dpad-btn.pressed {
+    transform: translateY(2px);
+    background: #ffe054;
+    box-shadow: inset 0 2px 0 #c28208, 0 1px 0 #2b1d14;
+  }
+
+  /* FireRed Battle Flash Shutter */
+  @keyframes shutterFlash {
+    0%, 100% { opacity: 0; }
+    12%, 32%, 52% { opacity: 1; }
+    22%, 42% { opacity: 0.15; }
+    68%, 90% { opacity: 0.96; }
+  }
+  .battle-flash-active {
+    animation: shutterFlash 1.15s steps(2) forwards;
+  }
+
+  @keyframes blinkCaret {
+    0%, 49% { opacity: 1; transform: translateY(0); }
+    50%, 100% { opacity: 0; transform: translateY(2px); }
+  }
+  .blink-caret { animation: blinkCaret 0.7s infinite; }
+
+  @keyframes recPulse {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0.2; }
+  }
+  .rec-dot { animation: recPulse 0.8s infinite; }
+
+  /* Existing Animations */
+  @keyframes bobSprite {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+  }
+  .sprite-bob { animation: bobSprite 0.9s steps(2) infinite; }
+
+  @keyframes dropIntoBin {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    65% { transform: translateY(62px) scale(0.75) rotate(12deg); opacity: 1; }
+    100% { transform: translateY(96px) scale(0.45) rotate(20deg); opacity: 0; }
+  }
+  .item-drop { animation: dropIntoBin 0.26s steps(4) forwards; }
+
+  @keyframes tossAway {
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(95px, -55px) rotate(60deg) scale(0.5); opacity: 0; }
+  }
+  .item-toss { animation: tossAway 0.28s steps(4) forwards; }
+
+  @keyframes binChomp {
+    0% { transform: scaleY(1) scaleX(1); }
+    40% { transform: scaleY(0.84) scaleX(1.12); }
+    75% { transform: scaleY(1.06) scaleX(0.96); }
+    100% { transform: scaleY(1) scaleX(1); }
+  }
+  .bin-chomp { animation: binChomp 0.26s steps(3); }
+
+  @keyframes questGlow {
+    0%, 100% { box-shadow: 0 0 0 3px #f59e0b, 0 4px 0 #2b1d14; }
+    50% { box-shadow: 0 0 0 4px #fde047, 0 0 18px #facc15, 0 4px 0 #2b1d14; }
+  }
+  .quest-trap { animation: questGlow 1s steps(2) infinite; }
+
+  @keyframes shakeStage {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+  .stage-shake { animation: shakeStage 0.26s steps(3); }
+
+  @keyframes floatScore {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-44px) scale(1.15); }
+  }
+  .float-txt {
+    position: absolute;
+    pointer-events: none;
+    animation: floatScore 0.75s steps(6) forwards;
+    text-shadow: 2px 2px 0 #2b1d14, -1px -1px 0 #2b1d14, 1px -1px 0 #2b1d14, -1px 1px 0 #2b1d14;
+  }
+</style>
+</head>
+<body class="relative flex flex-col">
+
+<!-- FULL-SCREEN PIXELS.XYZ ANIMATED MEADOW BACKGROUND CANVAS -->
+<canvas id="worldBgCanvas" class="fixed inset-0 -z-10 h-full w-full pointer-events-none"></canvas>
+
+<!-- TOP PIXELS.XYZ RPG HUD BAR (Mobile Compact + Desktop Rich) -->
+<header class="sticky top-0 z-40 px-2 pt-1.5 sm:px-5 sm:pt-2.5">
+  <div class="mx-auto max-w-6xl">
+    <div class="rpg-wood-frame flex flex-wrap items-center justify-between gap-1.5 sm:gap-2.5 px-2.5 py-1.5 sm:px-4 sm:py-2">
+      <!-- Left: Pixel Avatar Frame + Guild Banner + Energy/Diversion Bar -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Pixel Character Portrait -->
+        <div class="relative grid h-9 w-9 sm:h-12 sm:w-12 shrink-0 place-items-center rounded-xl border-[3px] border-[#2b1d14] bg-[#7bc950] shadow-[inset_0_2px_0_#b6f593,0_3px_0_#2b1d14]">
+          <svg viewBox="0 0 16 16" class="h-7 w-7 sm:h-9 sm:w-9" shape-rendering="crispEdges">
+            <rect x="4" y="2" width="8" height="3" fill="#3b2314"/>
+            <rect x="3" y="4" width="2" height="4" fill="#3b2314"/>
+            <rect x="11" y="4" width="2" height="4" fill="#3b2314"/>
+            <rect x="5" y="4" width="6" height="6" fill="#f7c99e"/>
+            <rect x="6" y="6" width="1" height="2" fill="#2b1d14"/>
+            <rect x="9" y="6" width="1" height="2" fill="#2b1d14"/>
+            <rect x="7" y="8" width="2" height="1" fill="#b85d43"/>
+            <rect x="4" y="10" width="8" height="5" fill="#289e38"/>
+            <rect x="7" y="10" width="2" height="5" fill="#ffe054"/>
+          </svg>
+          <span id="hudLvlBadge" class="absolute -bottom-1.5 -right-1.5 rounded border-2 border-[#2b1d14] bg-[#ffe054] px-1 font-pixel text-[6px] sm:text-[7px] font-bold text-[#2b1d14]">W1</span>
+        </div>
+
+        <div class="flex flex-col gap-0.5 sm:gap-1">
+          <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <span class="font-pixel text-[10px] sm:text-sm text-[#fff8e7] drop-shadow-[2px_2px_0_#2b1d14]">CycleSquad</span>
+            <span id="hudPlayerPill" class="hidden sm:inline-block rounded-md border-2 border-[#2b1d14] bg-[#f7efd8] px-2 py-0.5 font-silk text-[11px] font-bold text-[#2b1d14]">
+              RANGER • <span class="text-[#238219]">GreenWardens</span>
+            </span>
+          </div>
+
+          <!-- Pixels-style Green Energy / kg Diverted Bar -->
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <div class="relative h-2.5 sm:h-3.5 w-20 sm:w-44 overflow-hidden rounded-md border-2 border-[#2b1d14] bg-[#3b2314] shadow-inner">
+              <div id="hudKgBar" class="h-full bg-gradient-to-b from-[#7ef263] to-[#41b32b] transition-all duration-300" style="width: 15%"></div>
+            </div>
+            <span class="font-silk text-[10px] sm:text-[11px] font-bold text-[#fff5dc] drop-shadow-[1px_1px_0_#2b1d14]">
+              <span id="hudKg" class="num">0.00</span><span class="hidden sm:inline"> kg diverted</span><span class="sm:hidden">kg</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Pixels Currency & Resource Pills -->
+      <div class="flex items-center gap-1 sm:gap-2">
+        <!-- Evidence Archive Pill -->
+        <button id="evidenceBtn" type="button" class="rpg-plaque flex items-center gap-1 px-2 py-1 text-xs font-bold hover:bg-white cursor-pointer" title="Open Eco-Cam Evidence Archive">
+          <span>📹</span>
+          <span id="hudEvidence" class="font-silk text-[11px] sm:text-xs text-[#2b1d14] num">0</span>
+        </button>
+
+        <!-- Scans Pill -->
+        <div class="rpg-plaque hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold">
+          <span>📷</span>
+          <span class="hidden md:inline font-silk text-[11px]">Scans:</span>
+          <span id="hudScans" class="font-silk text-xs text-[#2b1d14] num">5/5</span>
+        </div>
+
+        <!-- Lightning Streak Pill -->
+        <div class="rpg-plaque hidden md:flex items-center gap-1 px-2.5 py-1 text-xs font-bold" title="Streak Multiplier: 3 in a row = 1.5x · 6 in a row = 2x">
+          <span>⚡</span>
+          <span id="hudStreak" class="font-silk text-xs text-[#c26d06] num">1x</span>
+        </div>
+
+        <!-- $CYCLE Coin Pill -->
+        <div class="rpg-plaque flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 text-xs font-bold">
+          <span class="inline-grid h-3.5 w-3.5 sm:h-4 sm:w-4 place-items-center rounded-full border border-[#2b1d14] bg-[#ffd426] text-[8px] sm:text-[9px] font-black text-[#593800]">$</span>
+          <span id="hudPoints" class="font-silk text-[11px] sm:text-xs text-[#2b1d14] num">150</span>
+          <span class="hidden sm:inline font-silk text-[10px] text-[#6e4e35]">CYCLE</span>
+        </div>
+
+        <!-- Music Toggle Button -->
+        <button id="musicBtn" type="button" class="rpg-plaque grid h-7 w-7 sm:h-8 sm:w-8 place-items-center text-xs hover:bg-white cursor-pointer" title="Toggle 8-Bit Music">🎵</button>
+
+        <!-- Sound SFX Button -->
+        <button id="soundBtn" type="button" class="rpg-plaque hidden sm:grid h-8 w-8 place-items-center text-xs hover:bg-white cursor-pointer" title="Toggle Chiptune SFX">🔊</button>
+
+        <!-- Settings Button -->
+        <button id="settingsBtn" type="button" class="rpg-plaque grid h-7 w-7 sm:h-8 sm:w-8 place-items-center text-xs hover:bg-white cursor-pointer" title="Settings & Guild">⚙️</button>
+      </div>
+    </div>
+
+    <!-- PIXELS RPG WOODEN TABS (World Map Default!) -->
+    <nav class="mt-1.5 sm:mt-2.5 flex gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar px-0.5" aria-label="CycleSquad Open-World Tabs">
+      <button class="rpg-tab" data-tab="world" aria-selected="true">🗺️ 1. World Map</button>
+      <button class="rpg-tab" data-tab="sort" aria-selected="false">🌱 2. Sort Blitz</button>
+      <button class="rpg-tab" data-tab="camera" aria-selected="false">📷 3. AI Field Lens</button>
+      <button class="rpg-tab" data-tab="market" aria-selected="false">🏪 4. Free-Cycle Bazaar</button>
+      <button class="rpg-tab" data-tab="squads" aria-selected="false">🌍 5. World Guilds</button>
+    </nav>
+  </div>
+</header>
+
+<!-- MAIN CONTENT AREA -->
+<main class="mx-auto w-full max-w-6xl flex-1 px-2 pb-4 sm:px-5 sm:pb-6">
+
+  <!-- ========================================================= -->
+  <!-- TAB 1: WORLD MAP (ENDLESS FIRERED 2D PIXEL OVERWORLD)     -->
+  <!-- ========================================================= -->
+  <section class="panel rpg-parchment rounded-tl-none p-2 sm:p-4" data-panel="world">
+
+    <!-- INFINITE CONTRACT & WAVE HUD STRIP -->
+    <div class="mb-2 sm:mb-3 rounded-xl border-[3px] border-[#2b1d14] bg-[#e6d5b0] p-2 sm:p-3 shadow-[inset_0_2px_0_rgba(255,255,255,0.5)]">
+      <div class="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
+        <div class="flex flex-wrap items-center gap-2">
+          <span id="owWaveBadge" class="rounded-lg border-2 border-[#2b1d14] bg-[#ffe054] px-2 py-0.5 sm:px-2.5 sm:py-1 font-pixel text-[8px] sm:text-[9px] text-[#2b1d14] shadow-[0_2px_0_#2b1d14]">WAVE 1</span>
+          <div class="flex flex-col">
+            <span id="owRankTitle" class="font-silk text-[11px] sm:text-xs font-bold text-[#2b1d14]">Eco Rookie • Tier 1</span>
+            <div class="mt-0.5 flex items-center gap-1.5">
+              <div class="h-2 w-20 sm:w-28 overflow-hidden rounded border border-[#2b1d14] bg-[#4a3222]">
+                <div id="owXpBar" class="h-full bg-[#67d1ff] transition-all duration-300" style="width: 10%"></div>
+              </div>
+              <span id="owXpText" class="font-silk text-[9px] sm:text-[10px] font-bold text-[#5c3824] num">0/100 XP</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <span id="owZonePill" class="rounded-lg border-2 border-[#2b1d14] bg-[#f7efd8] px-2 py-0.5 sm:px-2.5 sm:py-1 font-silk text-[10px] sm:text-[11px] font-bold text-[#238219]">📍 Emerald Meadow</span>
+          <button id="rerollContractBtn" type="button" class="rpg-btn-gold rounded-lg px-2 py-1 font-pixel text-[7px] sm:text-[8px]" title="Generate a fresh contract for this wave">🔄 REROLL</button>
+        </div>
+      </div>
+
+      <!-- Active Contract Objectives (5 Compact Plaques including Waste-Type Objective) -->
+      <div class="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-5">
+        <div class="rpg-plaque flex items-center justify-between px-2 py-1">
+          <span class="font-silk text-[10px] font-bold text-[#5c3824]">📹 Grunts</span>
+          <span id="ctGrunts" class="font-pixel text-[9px] text-[#2b1d14] num">0/2</span>
+        </div>
+        <div class="rpg-plaque flex items-center justify-between px-2 py-1">
+          <span id="ctTypeLabel" class="font-silk text-[10px] font-bold text-[#5c3824]">🗑️ Wet</span>
+          <span id="ctTypeCount" class="font-pixel text-[9px] text-[#238219] num">0/2</span>
+        </div>
+        <div class="rpg-plaque flex items-center justify-between px-2 py-1">
+          <span class="font-silk text-[10px] font-bold text-[#5c3824]">⚖️ Divert</span>
+          <span id="ctKg" class="font-pixel text-[9px] text-[#238219] num">0.0/1.1kg</span>
+        </div>
+        <div class="rpg-plaque flex items-center justify-between px-2 py-1">
+          <span class="font-silk text-[10px] font-bold text-[#5c3824]">🎯 1.5x Zone</span>
+          <span id="ctFocus" class="truncate max-w-[78px] font-silk text-[10px] font-bold text-[#b45309]">All Zones</span>
+        </div>
+        <div class="rpg-plaque col-span-2 sm:col-span-1 flex items-center justify-between px-2 py-1">
+          <span class="font-silk text-[10px] font-bold text-[#5c3824]">💰 Bounty</span>
+          <span id="ctReward" class="font-pixel text-[9px] text-[#d97706] num">+95 $CYCLE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIRERED OVERWORLD CANVAS FRAME -->
+    <div class="rpg-wood-frame p-1.5 sm:p-3">
+      <div id="owViewport" class="relative w-full h-[330px] sm:h-[430px] lg:h-[480px] overflow-hidden rounded-xl border-[3px] border-[#2b1d14] bg-[#2b1d14] touch-none">
+        <canvas id="overworldCanvas" class="block h-full w-full cursor-pointer"></canvas>
+
+        <!-- Quick Controls Hint Overlay (Top-Left) -->
+        <div class="pointer-events-none absolute left-2.5 top-2.5 hidden sm:flex items-center gap-1.5 rounded-lg border-2 border-[#2b1d14] bg-[#f7efd8]/90 px-2.5 py-1 font-silk text-[10px] font-bold text-[#2b1d14] shadow-[0_2px_0_#2b1d14]">
+          <span>WASD/Tap Map: Move</span> · <span>Space/E: Pick/Sort/Talk</span>
+        </div>
+
+        <!-- FireRed Battle Flash Overlay -->
+        <div id="battleFlash" class="pointer-events-none absolute inset-0 z-30 hidden flex-col items-center justify-center bg-[#181024]">
+          <div class="absolute inset-0 opacity-30" style="background: repeating-linear-gradient(0deg, #000 0px, #000 10px, transparent 10px, transparent 20px);"></div>
+          <div class="relative z-10 rounded-xl border-4 border-[#ffe054] bg-[#2b1d14] px-6 py-4 text-center shadow-[0_6px_0_#000]">
+            <p class="font-pixel text-[10px] text-[#ffe054] tracking-widest">! ENCOUNTER !</p>
+            <p id="battleFlashText" class="mt-2 font-pixel text-sm sm:text-base text-white">A wild SLUDGE GRUNT appeared!</p>
+          </div>
+        </div>
+
+        <!-- CLASSIC FIRERED BOTTOM PARCHMENT DIALOGUE BOX -->
+        <div id="owDialogue" class="absolute inset-x-2.5 bottom-2.5 z-20 hidden">
+          <div class="rpg-parchment border-[4px] border-[#2b1d14] p-3 sm:p-4 shadow-[0_6px_0_rgba(0,0,0,0.5)]">
+            <div class="flex items-center justify-between gap-2 mb-1.5">
+              <span id="dlgSpeaker" class="rounded-md border-2 border-[#2b1d14] bg-[#ffe054] px-2.5 py-0.5 font-pixel text-[9px] text-[#2b1d14]">PROF. OAKLEAF</span>
+              <span id="dlgHint" class="font-silk text-[10px] font-bold text-[#6e4e35]">Press Space / Tap</span>
+            </div>
+            <p id="dlgText" class="min-h-[38px] font-silk text-xs sm:text-sm font-bold leading-relaxed text-[#2b1d14]"></p>
+            <div id="dlgActions" class="mt-2.5 flex flex-wrap items-center justify-end gap-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1-TAP QUICK-SORT 5-BIN BAR (Shown directly below overworld canvas whenever Ranger carries trash!) -->
+      <div id="owCarryBar" class="mt-2 hidden">
+        <div class="rpg-parchment border-[3px] border-[#2b1d14] p-2 sm:p-2.5 shadow-[0_4px_0_#2b1d14]">
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <div class="flex items-center gap-2">
+              <span id="owCarryIcon" class="text-2xl leading-none">🍌</span>
+              <div>
+                <p id="owCarryName" class="font-silk text-xs font-bold text-[#2b1d14]">Carrying: Banana Peel (0.08kg)</p>
+                <p class="font-silk text-[10px] text-[#5c3824]">Tap the matching bin below OR walk up to a color-coded bin on the map!</p>
+              </div>
+            </div>
+            <button id="owDropTrashBtn" type="button" class="rounded-lg border-2 border-[#2b1d14] bg-[#e6d5b0] px-2 py-1 font-pixel text-[7px] text-[#5c3824] cursor-pointer">DROP</button>
+          </div>
+          <div id="owQuickBins" class="grid grid-cols-5 gap-1.5"></div>
+        </div>
+      </div>
+
+      <!-- RESPONSIVE ON-SCREEN MOBILE / QUICK CONTROLS BAR (48px Thumb Targets) -->
+      <div class="mt-2 flex items-center justify-between gap-2 rounded-xl border-[3px] border-[#2b1d14] bg-[#5c3824] px-2.5 py-2">
+        <!-- 48px × 48px D-Pad -->
+        <div class="flex items-center gap-3">
+          <div class="grid grid-cols-3 gap-1.5 w-[156px]">
+            <div></div>
+            <button type="button" class="dpad-btn h-12 w-12 text-xs" data-dir="up" aria-label="Move Up">▲</button>
+            <div></div>
+            <button type="button" class="dpad-btn h-12 w-12 text-xs" data-dir="left" aria-label="Move Left">◀</button>
+            <button type="button" class="dpad-btn h-12 w-12 text-xs" data-dir="down" aria-label="Move Down">▼</button>
+            <button type="button" class="dpad-btn h-12 w-12 text-xs" data-dir="right" aria-label="Move Right">▶</button>
+          </div>
+          <div class="hidden md:flex flex-col text-[#fff5dc]">
+            <span class="font-pixel text-[8px] text-[#ffe054]">OPEN WORLD PATROL</span>
+            <span class="mt-1 font-silk text-[11px]">Pick up glowing trash &amp; sort into matching bins, or intercept Team Sludge!</span>
+            <span class="font-silk text-[10px] text-[#e0be96]">Tap anywhere on the map to auto-walk, or use D-Pad / WASD.</span>
+          </div>
+        </div>
+
+        <!-- Sprint + Interact Buttons -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 ml-auto">
+          <button id="btnSprint" type="button" class="rpg-btn-gold rounded-xl px-3.5 py-3 font-pixel text-[9px] touch-none">⚡ SPRINT</button>
+          <button id="btnInteract" type="button" class="rpg-btn-green rounded-xl px-4 py-3 font-pixel text-[9px] touch-none">💬 ACT</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= -->
+  <!-- TAB 2: SORT BLITZ (MAIN INTERACTIVE PIXEL GAME)           -->
+  <!-- ========================================================= -->
+  <section class="panel rpg-parchment rounded-tl-none p-3 sm:p-5" data-panel="sort" hidden>
+
+    <!-- Encounter Cleanup Mode Banner (Shown during recursive cleanup) -->
+    <div id="cleanupBanner" class="mb-2.5 hidden flex-wrap items-center justify-between gap-2 rounded-xl border-[3px] border-[#2b1d14] bg-[#ffe054] px-3 py-2 shadow-[0_3px_0_#2b1d14]">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">🧹</span>
+        <span id="cleanupBannerText" class="font-pixel text-[8px] sm:text-[10px] text-[#2b1d14]">EVIDENCE CLEANUP — WAVE 1 STASH!</span>
+      </div>
+      <span id="cleanupTrapRate" class="rounded border-2 border-[#2b1d14] bg-[#2b1d14] px-2 py-0.5 font-pixel text-[8px] text-[#ffe054]">3X TRAP RATE: 21%</span>
+    </div>
+
+    <!-- Open-World Biome Selector Strip + Prominent Exit to Map Button -->
+    <div class="mb-2.5 flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 border-[#2b1d14] bg-[#e6d5b0] px-3 py-2">
+      <div class="flex items-center gap-2">
+        <span class="font-pixel text-[9px] text-[#2b1d14]">🗺️ ZONE:</span>
+        <span id="biomeTag" class="font-silk text-xs font-bold text-[#238219]">Emerald Meadow</span>
+      </div>
+      <div class="flex flex-wrap items-center gap-1.5">
+        <div id="biomeSelector" class="flex flex-wrap gap-1">
+          <button type="button" class="biome-pill active" data-biome="meadow">🌿 Meadow</button>
+          <button type="button" class="biome-pill" data-biome="harbor">⚓ Harbor</button>
+          <button type="button" class="biome-pill" data-biome="market">🏮 Bazaar</button>
+          <button type="button" class="biome-pill" data-biome="cyber">🤖 Cyber</button>
+        </div>
+        <button id="exitSortTopBtn" type="button" class="rpg-btn-blue rounded-lg px-2.5 py-1 font-pixel text-[8px]">🗺️ Exit to Map</button>
+      </div>
+    </div>
+
+    <!-- 4 RPG Telemetry Plaques -->
+    <div class="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div class="rpg-plaque flex items-center justify-between px-3 py-2">
+        <div>
+          <p class="font-silk text-[10px] font-bold uppercase text-[#6e4e35]">Time Left</p>
+          <div class="mt-1 h-2 w-16 sm:w-20 overflow-hidden rounded border-2 border-[#2b1d14] bg-[#4a3222]">
+            <div id="timeBar" class="h-full w-full bg-[#46b832] transition-all duration-100"></div>
+          </div>
+        </div>
+        <p class="font-pixel text-sm sm:text-lg text-[#2b1d14] num"><span id="timeText">60</span>s</p>
+      </div>
+
+      <div class="rpg-plaque flex items-center justify-between px-3 py-2">
+        <p class="font-silk text-[10px] font-bold uppercase text-[#6e4e35]">Speed</p>
+        <p id="levelPill" class="font-pixel text-xs sm:text-base text-[#238219]">LVL 1</p>
+      </div>
+
+      <div class="rpg-plaque flex items-center justify-between px-3 py-2">
+        <p class="font-silk text-[10px] font-bold uppercase text-[#6e4e35]">Score</p>
+        <p id="roundScore" class="font-pixel text-sm sm:text-lg text-[#2b1d14] num">0</p>
+      </div>
+
+      <div class="rpg-plaque flex items-center justify-between px-3 py-2">
+        <p class="font-silk text-[10px] font-bold uppercase text-[#6e4e35]">Combo</p>
+        <p id="comboVal" class="font-pixel text-sm sm:text-lg text-[#d97706] num">0x</p>
+      </div>
+    </div>
+
+    <!-- WOODEN ARENA CONTAINER -->
+    <div class="rpg-wood-frame p-2.5 sm:p-4">
+      <!-- Top Conveyor Belt Queue -->
+      <div class="mb-2.5 flex flex-wrap items-center justify-between gap-2 rounded-xl border-[3px] border-[#2b1d14] bg-[#5c3824] px-3 py-1.5 shadow-inner">
+        <div class="flex items-center gap-2">
+          <span class="inline-block h-2.5 w-2.5 rounded-sm border border-[#2b1d14] bg-[#6ee755] animate-pulse"></span>
+          <span class="font-pixel text-[8px] sm:text-[9px] uppercase text-[#ffe8c2]">Conveyor</span>
+        </div>
+        <div id="queue" class="flex flex-1 items-center justify-end gap-1.5 overflow-x-auto no-scrollbar">
+          <span class="font-silk text-xs text-[#e0be96]">Press PLAY to start conveyor...</span>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE PIXEL OPEN-WORLD STAGE -->
+      <div id="desk" class="relative mb-3 min-h-[285px] sm:min-h-[335px] overflow-hidden rounded-xl border-[3px] border-[#2b1d14] bg-[#8cd660] shadow-inner flex flex-col items-center justify-center p-3 sm:p-4 transition-colors duration-300">
+        <!-- Dynamic Open-World Biome Ground Pattern inside Arena -->
+        <div id="biomeGround" class="pointer-events-none absolute inset-0" style="
+          background-image:
+            radial-gradient(circle at 50% 58%, #e8d3a3 0%, #e8d3a3 36%, transparent 37%),
+            linear-gradient(45deg, #7ec752 25%, transparent 25%),
+            linear-gradient(-45deg, #7ec752 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, #7ec752 75%),
+            linear-gradient(-45deg, transparent 75%, #7ec752 75%);
+          background-size: 100% 100%, 32px 32px, 32px 32px, 32px 32px, 32px 32px;
+          background-position: center, 0 0, 0 16px, 16px -16px, -16px 0;
+        "></div>
+
+        <!-- Floating Canvas for Pixel Sparkles -->
+        <canvas id="fxCanvas" class="pointer-events-none absolute inset-0 z-30 h-full w-full"></canvas>
+
+        <!-- Floating Text Container -->
+        <div id="floatLayer" class="pointer-events-none absolute inset-0 z-30"></div>
+
+        <!-- Stage Top Pill -->
+        <div id="stageZoneBanner" class="z-10 mb-2 rounded-full border-2 border-[#2b1d14] bg-[#f7efd8] px-3 py-0.5 font-silk text-[10px] sm:text-[11px] font-bold text-[#2b1d14] shadow-[0_2px_0_#2b1d14]">
+          Emerald Meadow • 60s Open-World Sort Quest
+        </div>
+
+        <!-- IDLE / PLAY SCREEN -->
+        <div id="idle" class="z-10 flex max-w-md flex-col items-center text-center py-1">
+          <div class="mb-2.5 flex items-center justify-center gap-4 rounded-2xl border-[3px] border-[#2b1d14] bg-[#f7efd8]/95 px-5 py-2.5 shadow-[0_4px_0_#2b1d14]">
+            <div class="sprite-bob flex flex-col items-center">
+              <span class="text-3xl">🍌</span>
+              <span class="mt-1 font-pixel text-[7px] text-[#5c3824]">IN HAND</span>
+            </div>
+            <span class="font-pixel text-xs text-[#238219]">➔</span>
+            <div class="flex flex-col items-center">
+              <span class="text-3xl">🗑️</span>
+              <span class="mt-1 font-pixel text-[7px] text-[#238219]">FILL BIN</span>
+            </div>
+          </div>
+
+          <h1 class="font-pixel text-base sm:text-xl leading-snug text-[#fffdf5] drop-shadow-[3px_3px_0_#2b1d14]">
+            SORT FAST. SPOT TRAPS!
+          </h1>
+          <p class="mt-2 rounded-lg border-2 border-[#2b1d14] bg-[#f7efd8]/95 px-3 py-1.5 text-xs font-semibold text-[#2b1d14]">
+            Tap any bin below or press <kbd class="rounded border border-[#2b1d14] bg-[#ffe054] px-1.5 py-0.5 font-pixel text-[9px]">1</kbd>–<kbd class="rounded border border-[#2b1d14] bg-[#ffe054] px-1.5 py-0.5 font-pixel text-[9px]">5</kbd>. Trap items pay <span class="font-extrabold text-[#b45309]">3x Bounty (+30 $CYCLE)</span>!
+          </p>
+
+          <div class="mt-3.5 flex flex-wrap items-center justify-center gap-2">
+            <button id="startBtn" class="rpg-btn-green rounded-xl px-6 py-3 font-pixel text-xs sm:text-sm uppercase tracking-wider">
+              <span id="startLabel">▶ PLAY BLITZ</span>
+            </button>
+            <button id="idleExitMapBtn" type="button" class="rpg-btn-blue rounded-xl px-4 py-3 font-pixel text-[10px]">
+              🗺️ Exit to Map
+            </button>
+          </div>
+        </div>
+
+        <!-- ACTIVE GAME STAGE -->
+        <div id="activeStage" class="z-10 hidden w-full max-w-2xl flex-col items-center">
+          <div class="mb-2 flex w-full max-w-md items-center justify-between gap-2">
+            <div class="flex flex-1 items-center gap-2 rounded-lg border-2 border-[#2b1d14] bg-[#f7efd8] px-2.5 py-1 shadow-[0_2px_0_#2b1d14]">
+              <span class="font-pixel text-[8px] text-[#2b1d14]">FUSE</span>
+              <div class="h-2.5 flex-1 overflow-hidden rounded border border-[#2b1d14] bg-[#4a3222]">
+                <div id="itemBar" class="h-full w-full bg-[#46b832] transition-all duration-75"></div>
+              </div>
+            </div>
+            <button id="activeExitMapBtn" type="button" class="rpg-btn-blue shrink-0 rounded-lg px-2.5 py-1.5 font-pixel text-[8px]">🗺️ Exit to Map</button>
+          </div>
+
+          <div class="grid w-full grid-cols-1 items-center gap-2.5 sm:grid-cols-12">
+            <!-- LEFT SCROLL -->
+            <div class="order-2 sm:order-1 sm:col-span-4 flex flex-col items-center sm:items-end">
+              <div class="rpg-plaque w-full max-w-[230px] p-2 text-center sm:text-right">
+                <span id="trapBadge" class="quest-trap mb-1 hidden inline-block rounded border-2 border-[#2b1d14] bg-[#ffe054] px-2 py-0.5 font-pixel text-[7px] text-[#2b1d14]">
+                  ★ 3X BOUNTY +30
+                </span>
+                <h2 id="itemName" class="font-silk text-sm sm:text-lg font-bold leading-tight text-[#2b1d14]">—</h2>
+                <p id="itemNote" class="mt-0.5 text-[11px] font-medium text-[#5c3824]">—</p>
+              </div>
+            </div>
+
+            <!-- CENTER -->
+            <div class="order-1 sm:order-2 sm:col-span-4 flex flex-col items-center justify-center">
+              <div id="handActor" draggable="true" class="sprite-bob group relative flex cursor-grab active:cursor-grabbing flex-col items-center">
+                <div class="relative flex items-center justify-center">
+                  <svg viewBox="0 0 16 16" class="h-10 w-10 sm:h-11 sm:w-11 -mr-2 drop-shadow-[2px_2px_0_#2b1d14]" shape-rendering="crispEdges">
+                    <rect x="0" y="6" width="3" height="6" fill="#289e38"/>
+                    <rect x="3" y="5" width="6" height="7" fill="#f7c99e"/>
+                    <rect x="9" y="5" width="4" height="2" fill="#f7c99e"/>
+                    <rect x="9" y="8" width="5" height="2" fill="#e3ad7d"/>
+                    <rect x="9" y="11" width="4" height="2" fill="#cf9563"/>
+                  </svg>
+
+                  <div id="heldWaste" class="relative z-10 grid h-14 w-14 sm:h-16 sm:w-16 place-items-center rounded-2xl border-[3px] border-[#2b1d14] bg-[#fffaf0] text-3xl sm:text-4xl shadow-[0_4px_0_#2b1d14] transition-transform group-hover:scale-110">
+                    <span id="itemGlyph">🍕</span>
+                  </div>
+
+                  <svg viewBox="0 0 16 16" class="h-10 w-10 sm:h-11 sm:w-11 -ml-2 -scale-x-100 drop-shadow-[2px_2px_0_#2b1d14]" shape-rendering="crispEdges">
+                    <rect x="0" y="6" width="3" height="6" fill="#289e38"/>
+                    <rect x="3" y="5" width="6" height="7" fill="#f7c99e"/>
+                    <rect x="9" y="5" width="4" height="2" fill="#f7c99e"/>
+                    <rect x="9" y="8" width="5" height="2" fill="#e3ad7d"/>
+                    <rect x="9" y="11" width="4" height="2" fill="#cf9563"/>
+                  </svg>
+                </div>
+                <span class="mt-1 rounded border border-[#2b1d14] bg-[#2b1d14] px-1.5 py-0.5 font-pixel text-[7px] text-[#ffe054]">IN HAND</span>
+              </div>
+
+              <div class="my-0.5 font-pixel text-[9px] text-[#2b1d14]">▼</div>
+
+              <div class="flex flex-col items-center">
+                <div id="centerBinLid" class="h-2.5 w-24 sm:w-28 rounded-t-md border-[3px] border-[#2b1d14] bg-[#46b832] shadow-[inset_0_2px_0_rgba(255,255,255,0.45)] transition-colors"></div>
+                <div id="centerBinBody" class="relative flex h-20 w-20 sm:h-24 sm:w-24 flex-col justify-end overflow-hidden rounded-b-xl border-x-[3px] border-b-[3px] border-[#2b1d14] bg-[#2b1d14]/85 p-1.5 shadow-[0_5px_0_#2b1d14]">
+                  <div class="pointer-events-none absolute inset-0 opacity-20" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 8px 8px;"></div>
+                  <div id="binInnerPile" class="relative z-10 flex flex-wrap-reverse items-end justify-center gap-0.5 leading-none">
+                    <span class="py-4 font-pixel text-[7px] text-[#d9c59a]">EMPTY</span>
+                  </div>
+                </div>
+                <div class="mt-1 flex items-center gap-1 rounded-md border-2 border-[#2b1d14] bg-[#f7efd8] px-2 py-0.5 shadow-[0_2px_0_#2b1d14]">
+                  <span id="centerBinLabel" class="font-pixel text-[7px] text-[#2b1d14]">DUSTBIN</span>
+                  <span id="centerBinCount" class="rounded bg-[#2b1d14] px-1 font-pixel text-[7px] text-[#ffe054]">0</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT SCROLL -->
+            <div class="order-3 sm:col-span-4 hidden sm:flex flex-col items-center sm:items-start">
+              <div class="rpg-plaque w-full max-w-[215px] p-2.5 text-center sm:text-left">
+                <p class="font-pixel text-[7px] uppercase text-[#6e4e35]">Streak Bonus</p>
+                <p id="stageMultiplier" class="mt-1 font-pixel text-sm text-[#238219]">1.0x $CYCLE</p>
+                <div class="mt-1.5 flex gap-1" id="streakPips">
+                  <span class="h-2 flex-1 rounded-sm border border-[#2b1d14] bg-[#cbb589]"></span>
+                  <span class="h-2 flex-1 rounded-sm border border-[#2b1d14] bg-[#cbb589]"></span>
+                  <span class="h-2 flex-1 rounded-sm border border-[#2b1d14] bg-[#cbb589]"></span>
+                  <span class="h-2 flex-1 rounded-sm border border-[#2b1d14] bg-[#cbb589]"></span>
+                  <span class="h-2 flex-1 rounded-sm border border-[#2b1d14] bg-[#cbb589]"></span>
+                  <span class="h-2 flex-1 rounded-sm border border-[#2b1d14] bg-[#cbb589]"></span>
+                </div>
+                <p id="lastActionMsg" class="mt-2 font-silk text-[11px] font-bold text-[#2b1d14]">Pick a bin below!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RULEBOOK MISTAKE SCROLL MODAL -->
+        <div id="rulebook" class="absolute inset-0 z-30 hidden items-center justify-center bg-[#2b1d14]/75 p-4 backdrop-blur-[2px]">
+          <div class="rpg-parchment w-full max-w-sm p-4 text-left">
+            <div class="flex items-center justify-between border-b-2 border-[#d2be94] pb-2">
+              <span class="font-pixel text-[9px] text-[#b45309]">📜 FIELD GUIDE</span>
+              <span class="rounded border border-[#2b1d14] bg-[#fb7185] px-1.5 py-0.5 font-pixel text-[8px] text-white">-5 PTS</span>
+            </div>
+            <p id="rbItem" class="mt-2.5 font-silk text-lg font-bold text-[#2b1d14]">—</p>
+            <p id="rbTip" class="mt-1 text-xs font-medium leading-relaxed text-[#4a3222]">—</p>
+            <div class="mt-3 rounded-lg border-2 border-[#2b1d14] bg-[#e6d5b0] px-3 py-2 text-xs font-bold text-[#2b1d14]">
+              <span id="rbChosen">—</span> · Use: <span id="rbBin" class="underline uppercase">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROUND COMPLETE REWARD CHEST MODAL -->
+        <div id="endPanel" class="absolute inset-0 z-30 hidden items-center justify-center bg-[#2b1d14]/80 p-4 backdrop-blur-[2px]">
+          <div class="rpg-parchment w-full max-w-sm p-5 text-center">
+            <p id="endTitle" class="font-pixel text-[9px] uppercase text-[#238219]">🏆 SHIFT COMPLETE!</p>
+            <p id="endScore" class="mt-2 font-pixel text-3xl text-[#2b1d14] num">0</p>
+            <p class="font-silk text-xs font-bold text-[#6e4e35]">ROUND SCORE EARNED</p>
+
+            <div class="mt-3.5 grid grid-cols-2 gap-2 text-left">
+              <div class="rpg-parchment-sub px-3 py-2">
+                <p class="font-silk text-[10px] font-bold uppercase text-[#6e4e35]">Sorted</p>
+                <p id="endItems" class="font-pixel text-xs text-[#2b1d14] num">0</p>
+              </div>
+              <div class="rpg-parchment-sub px-3 py-2">
+                <p class="font-silk text-[10px] font-bold uppercase text-[#6e4e35]">Diverted</p>
+                <p id="endKg" class="font-pixel text-xs text-[#238219] num">0.00 kg</p>
+              </div>
+              <div class="rpg-parchment-sub px-3 py-2">
+                <p class="font-silk text-[10px] font-bold uppercase text-[#6e4e35]">Best Run</p>
+                <p id="endBest" class="font-pixel text-xs text-[#b45309] num">0</p>
+              </div>
+              <div class="rpg-parchment-sub px-3 py-2">
+                <p class="font-silk text-[10px] font-bold uppercase text-[#6e4e35]">Wallet</p>
+                <p id="endPts" class="font-pixel text-xs text-[#2b1d14] num">0</p>
+              </div>
+            </div>
+
+            <div class="mt-4 flex flex-col gap-2">
+              <button id="returnWorldBtn" class="rpg-btn-blue hidden w-full rounded-xl py-2.5 font-pixel text-[10px]">🗺️ RETURN TO WORLD MAP</button>
+              <div class="flex gap-2">
+                <button id="againBtn" class="rpg-btn-green flex-1 rounded-xl py-2.5 font-pixel text-[10px]">PLAY AGAIN</button>
+                <button id="closeEnd" class="rpg-btn-gold rounded-xl px-3.5 py-2.5 font-pixel text-[10px]">CLOSE</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM 5 INTERACTIVE DUSTBIN HOTBAR CHOICES (Mobile-Friendly 3-Col / Desktop 5-Col) -->
+      <div id="bins" class="grid grid-cols-3 gap-2 sm:grid-cols-5 sm:gap-2.5"></div>
+    </div>
+
+    <!-- PIXELS.XYZ 10-SLOT RPG LOOT INVENTORY HOTBAR -->
+    <div class="rpg-wood-frame mt-3 flex flex-wrap items-center justify-between gap-2 px-3 py-2">
+      <div class="flex items-center gap-2">
+        <span class="font-pixel text-[9px] text-[#ffe054]">🎒 LOOT BAG</span>
+        <span id="lootMeta" class="font-silk text-xs font-bold text-[#fff5dc]">0 items · 0.00 kg</span>
+      </div>
+      <div id="loot" class="flex min-h-[34px] flex-1 items-center justify-end gap-1.5 overflow-x-auto no-scrollbar">
+        <span class="font-silk text-xs text-[#e0be96]">Sorted waste items collect in your RPG bag...</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= -->
+  <!-- TAB 3: AI FIELD LENS (REAL GEMINI VISION AI SCANNER)      -->
+  <!-- ========================================================= -->
+  <section class="panel rpg-parchment rounded-tl-none p-4 sm:p-8" data-panel="camera" hidden>
+    <div class="mx-auto max-w-xl text-center">
+      <div class="mx-auto grid h-14 w-14 sm:h-16 sm:w-16 place-items-center rounded-2xl border-[3px] border-[#2b1d14] bg-[#ffe054] text-2xl sm:text-3xl shadow-[0_4px_0_#2b1d14]">📷</div>
+      <p class="mt-3 font-pixel text-[9px] text-[#238219]">GEMINI VISION AI • REAL-WORLD SCANNER</p>
+      <h2 class="mt-1.5 font-pixel text-base sm:text-xl text-[#2b1d14]">AI Eco-Field Scanner</h2>
+      <p class="mt-2 text-xs sm:text-sm font-medium text-[#5c3824]">
+        Snap or upload a photo of any real-world item! Gemini Vision AI classifies the material into the right bin and rewards <strong class="text-[#238219]">+25 $CYCLE</strong>.
+      </p>
+
+      <div class="mt-3 inline-flex items-center gap-2 rounded-xl border-[3px] border-[#2b1d14] bg-[#e6d5b0] px-4 py-1.5 font-silk text-xs font-bold text-[#2b1d14]">
+        <span>Daily Scanner Energy:</span>
+        <span class="text-[#238219]" id="camScansLabel">5 / 5 Scans Available</span>
+      </div>
+
+      <div class="rpg-plaque mt-4 p-4 text-left">
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+          <label class="rpg-btn-blue flex-1 w-full text-center rounded-xl px-4 py-3 font-pixel text-[9px] cursor-pointer">
+            📸 SNAP / UPLOAD PHOTO
+            <input id="scanFileInput" type="file" accept="image/*" capture="environment" class="hidden" />
+          </label>
+          <button id="simScanBtn" type="button" class="rpg-btn-green flex-1 w-full rounded-xl px-4 py-3 font-pixel text-[9px]">
+            🔍 QUICK FIELD SCAN
+          </button>
+        </div>
+
+        <!-- Loading State while Gemini Vision Analyzes -->
+        <div id="scanLoadingBox" class="mt-3 hidden items-center justify-center gap-2.5 rounded-xl border-2 border-[#2b1d14] bg-[#fffaf0] p-3">
+          <span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[#2b1d14] border-t-transparent"></span>
+          <span class="font-pixel text-[9px] text-[#2b1d14]">GEMINI VISION ANALYZING...</span>
+        </div>
+
+        <div id="scanResultBox" class="mt-3 hidden rounded-xl border-2 border-[#2b1d14] bg-[#e6d5b0] p-3.5">
+          <div class="flex items-start gap-3">
+            <img id="scanThumb" alt="Scanned waste" class="hidden h-14 w-14 shrink-0 rounded-lg border-2 border-[#2b1d14] object-cover" />
+            <span id="scanResIcon" class="text-3xl">🥤</span>
+            <div class="flex-1">
+              <div class="flex flex-wrap items-center justify-between gap-1">
+                <p id="scanResName" class="font-silk text-sm font-bold text-[#2b1d14]">PET Water Bottle</p>
+                <span class="rounded border border-[#2b1d14] bg-[#6ee755] px-2 py-0.5 font-pixel text-[8px] text-[#183610]">+25 $CYCLE</span>
+              </div>
+              <p id="scanResBin" class="mt-0.5 font-pixel text-[9px] text-[#238219]">BIN: RECYCLABLE</p>
+              <p id="scanResTip" class="mt-1 text-xs text-[#4a3222]">Rinse and crush before placing in the Recyclable stream.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-3 flex items-center justify-between">
+          <span class="font-silk text-[10px] font-bold text-[#238219]">✅ Built-in Eco-Lens Active</span>
+          <button id="openCamSettings" type="button" class="font-silk text-[11px] font-bold underline text-[#5c3824] hover:text-[#2b1d14]">
+            Override API Key in Settings
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= -->
+  <!-- TAB 4: FREE-CYCLE BAZAAR (PIXELS PLAYER MARKETPLACE)      -->
+  <!-- ========================================================= -->
+  <section class="panel rpg-parchment rounded-tl-none p-4 sm:p-6" data-panel="market" hidden>
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-2 border-b-[3px] border-[#d2be94] pb-3">
+      <div>
+        <p class="font-pixel text-[9px] text-[#238219]">PIXELS BAZAAR • OVERWORLD PERKS &amp; COMPANIONS</p>
+        <h2 class="mt-1 font-pixel text-base sm:text-lg text-[#2b1d14]">Free-Cycle Market</h2>
+      </div>
+      <div class="rpg-plaque px-3 py-1.5 font-silk text-xs font-bold">
+        Your Balance: <span id="mktBalance" class="text-[#238219]">150</span> $CYCLE
+      </div>
+    </div>
+
+    <div id="marketGrid" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"></div>
+  </section>
+
+  <!-- ========================================================= -->
+  <!-- TAB 5: WORLD GUILDS & ZERO-KEY GOOGLE MAPS FINDER         -->
+  <!-- ========================================================= -->
+  <section class="panel rpg-parchment rounded-tl-none p-4 sm:p-6" data-panel="squads" hidden>
+    <!-- ZERO-KEY GOOGLE MAPS RECYCLING & E-WASTE DROP-OFF MAP -->
+    <div class="rpg-wood-frame mb-5 p-3 sm:p-4">
+      <div class="rpg-parchment p-3 sm:p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+          <div>
+            <p class="font-pixel text-[9px] text-[#238219]">REAL-WORLD ECO RADAR • ZERO-KEY MAPS</p>
+            <h3 class="mt-0.5 font-pixel text-xs sm:text-sm text-[#2b1d14]">Real-World Recycling &amp; E-Waste Drop-Off Map</h3>
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button id="mapRecBtn" type="button" class="rpg-btn-blue rounded-lg px-2.5 py-1.5 font-pixel text-[7px] sm:text-[8px]">♻️ Recycling Centers</button>
+            <button id="mapEwasteBtn" type="button" class="rpg-btn-gold rounded-lg px-2.5 py-1.5 font-pixel text-[7px] sm:text-[8px]">🔌 E-Waste Drop-Off</button>
+            <button id="mapBatteryBtn" type="button" class="rpg-btn-red rounded-lg px-2.5 py-1.5 font-pixel text-[7px] sm:text-[8px]">🔋 Battery Disposal</button>
+            <button id="mapGpsBtn" type="button" class="rpg-btn-green rounded-lg px-2.5 py-1.5 font-pixel text-[7px] sm:text-[8px]">📍 Near My GPS</button>
+          </div>
+        </div>
+        <div class="overflow-hidden rounded-xl border-[3px] border-[#2b1d14] bg-[#e6d5b0]">
+          <iframe
+            id="gmapsEmbedFrame"
+            title="Real-World Recycling & E-Waste Drop-Off Map"
+            class="h-[230px] sm:h-[270px] w-full border-0"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://maps.google.com/maps?q=recycling+center+e-waste+drop+off&output=embed">
+          </iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-2 border-b-[3px] border-[#d2be94] pb-3">
+      <div>
+        <p class="font-pixel text-[9px] text-[#238219]">SEASON 01 • GLOBAL ECO-GUILD WAR</p>
+        <h2 class="mt-1 font-pixel text-base sm:text-lg text-[#2b1d14]">World Guild Standings</h2>
+      </div>
+      <span class="rounded-lg border-2 border-[#2b1d14] bg-[#ffe054] px-3 py-1 font-silk text-xs font-bold text-[#2b1d14]">Live Open-World Sync</span>
+    </div>
+    <div id="guildList" class="space-y-3"></div>
+  </section>
+
+</main>
+
+<!-- ========================================================= -->
+<!-- ECO-CAM VIDEO RECORDING ENCOUNTER MODAL                   -->
+<!-- ========================================================= -->
+<div id="ecoCamModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#181024]/85 p-3 sm:p-4 backdrop-blur-xs">
+  <div class="rpg-wood-frame w-full max-w-2xl p-3 sm:p-4">
+    <div class="rpg-parchment p-3 sm:p-4">
+      <!-- Top Camcorder Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-[#d2be94] pb-2">
+        <div class="flex items-center gap-2">
+          <span class="rec-dot inline-block h-3 w-3 rounded-full border border-[#2b1d14] bg-[#e11d48]"></span>
+          <span id="camEnemyTitle" class="font-pixel text-[10px] sm:text-xs text-[#2b1d14]">ECO-CAM: SLUDGE GRUNT</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="camStreakBadge" class="rounded border-2 border-[#2b1d14] bg-[#ffe054] px-2 py-0.5 font-pixel text-[8px] text-[#2b1d14]">LOCK: 0%</span>
+          <span id="camTimecode" class="rounded border-2 border-[#2b1d14] bg-[#2b1d14] px-2 py-0.5 font-pixel text-[8px] text-[#6ee755] num">00:00:00</span>
+        </div>
+      </div>
+
+      <!-- Viewfinder Canvas -->
+      <div class="relative mt-3 h-[250px] sm:h-[310px] w-full overflow-hidden rounded-xl border-[3px] border-[#2b1d14] bg-[#181828] touch-none">
+        <canvas id="ecoCamCanvas" class="block h-full w-full cursor-crosshair"></canvas>
+      </div>
+
+      <!-- Evidence Progress Bar -->
+      <div class="mt-3">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-pixel text-[9px] text-[#2b1d14]">EVIDENCE RECORDED</span>
+          <span id="camProgressPct" class="font-pixel text-[10px] text-[#238219] num">0%</span>
+        </div>
+        <div class="h-5 w-full overflow-hidden rounded-lg border-[3px] border-[#2b1d14] bg-[#3b2314] shadow-inner">
+          <div id="camProgressBar" class="h-full bg-gradient-to-r from-[#46b832] via-[#6ee755] to-[#ffe054] transition-all duration-75" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Controls Footer -->
+      <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+        <p class="font-silk text-[11px] font-bold text-[#5c3824] max-w-sm">
+          <strong>Touch &amp; drag</strong> on screen (or aim + hold <strong>SPACE / REC</strong>) while locked on!
+        </p>
+        <div class="flex items-center gap-2">
+          <button id="camFleeBtn" type="button" class="rpg-btn-gold rounded-xl px-3.5 py-2.5 font-pixel text-[9px]">🏃 FLEE</button>
+          <button id="camRecBtn" type="button" class="rpg-btn-red rounded-xl px-5 py-2.5 font-pixel text-[10px] touch-none">● HOLD REC</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- EVIDENCE ARCHIVE MODAL                                    -->
+<!-- ========================================================= -->
+<div id="evidenceModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#2b1d14]/75 p-4 backdrop-blur-xs">
+  <div class="rpg-parchment max-h-[85vh] w-full max-w-lg overflow-y-auto p-5">
+    <div class="flex items-center justify-between border-b-2 border-[#d2be94] pb-2.5">
+      <div>
+        <h2 class="font-pixel text-xs text-[#2b1d14]">📹 EVIDENCE ARCHIVE</h2>
+        <p class="mt-0.5 font-silk text-[11px] font-bold text-[#5c3824]">Verified Eco-Cam recordings of Team Sludge</p>
+      </div>
+      <button id="evClose" type="button" class="rounded-lg border-2 border-[#2b1d14] bg-[#e6d5b0] px-2 py-0.5 font-pixel text-xs text-[#2b1d14] cursor-pointer">✕</button>
+    </div>
+    <div id="evidenceList" class="mt-3 space-y-2"></div>
+  </div>
+</div>
+
+<!-- ONBOARDING MODAL -->
+<div id="onboard" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#2b1d14]/75 p-4 backdrop-blur-xs">
+  <div class="rpg-parchment w-full max-w-md p-5">
+    <div class="flex items-center gap-3 border-b-2 border-[#d2be94] pb-3">
+      <div class="grid h-11 w-11 place-items-center rounded-xl border-[3px] border-[#2b1d14] bg-[#6ee755] text-xl shadow-[0_3px_0_#2b1d14]">♻️</div>
+      <div>
+        <p class="font-pixel text-xs text-[#2b1d14]">WELCOME TO CYCLESQUAD</p>
+        <p class="font-silk text-xs font-bold text-[#5c3824]">Create your Open-World Eco-Ranger</p>
+      </div>
+    </div>
+
+    <label for="obName" class="mt-4 block font-silk text-xs font-bold uppercase text-[#2b1d14]">Ranger Name</label>
+    <input id="obName" maxlength="18" placeholder="e.g. Shaila" class="mt-1 w-full rounded-xl border-[3px] border-[#2b1d14] bg-[#fffaf0] px-3 py-2 font-silk text-sm font-bold text-[#2b1d14] focus:outline-none" />
+
+    <p class="mt-4 font-silk text-xs font-bold uppercase text-[#2b1d14]">Choose Open-World Guild</p>
+    <div id="obSquads" class="mt-1.5 grid grid-cols-2 gap-2"></div>
+
+    <div class="mt-4 flex items-center justify-between rounded-xl border-2 border-[#2b1d14] bg-[#e6d5b0] px-3 py-2">
+      <span class="font-silk text-xs font-bold text-[#4a3222]">Starter Pouch</span>
+      <span class="font-pixel text-[10px] text-[#238219]">150 $CYCLE</span>
+    </div>
+    <p id="obErr" class="mt-2 hidden font-silk text-xs font-bold text-rose-700">Please enter at least 2 characters!</p>
+    <button id="obStart" class="rpg-btn-green mt-3.5 w-full rounded-xl py-3 font-pixel text-xs">ENTER OPEN WORLD</button>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL (Gemini API input ALWAYS blank by default; hidden key never shown) -->
+<div id="settings" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#2b1d14]/75 p-4 backdrop-blur-xs">
+  <div class="rpg-parchment max-h-[90vh] w-full max-w-md overflow-y-auto p-5">
+    <div class="flex items-center justify-between border-b-2 border-[#d2be94] pb-2.5">
+      <h2 class="font-pixel text-xs text-[#2b1d14]">⚙️ RANGER SETTINGS</h2>
+      <button id="setClose" class="rounded-lg border-2 border-[#2b1d14] bg-[#e6d5b0] px-2 py-0.5 font-pixel text-xs text-[#2b1d14] cursor-pointer">✕</button>
+    </div>
+
+    <label for="setName" class="mt-4 block font-silk text-xs font-bold uppercase text-[#2b1d14]">Ranger Name</label>
+    <input id="setName" maxlength="18" class="mt-1 w-full rounded-xl border-[3px] border-[#2b1d14] bg-[#fffaf0] px-3 py-2 font-silk text-sm font-bold text-[#2b1d14]" />
+
+    <p class="mt-4 font-silk text-xs font-bold uppercase text-[#2b1d14]">Open-World Guild</p>
+    <div id="setSquads" class="mt-1.5 grid grid-cols-2 gap-2"></div>
+
+    <label for="setKey" class="mt-4 block font-silk text-xs font-bold uppercase text-[#2b1d14]">Gemini API Key</label>
+    <input id="setKey" type="password" autocomplete="off" placeholder="Optional: Override Gemini API Key" class="mt-1 w-full rounded-xl border-[3px] border-[#2b1d14] bg-[#fffaf0] px-3 py-2 text-xs font-semibold text-[#2b1d14]" />
+
+    <label for="setBackend" class="mt-4 block font-silk text-xs font-bold uppercase text-[#2b1d14]">Backend Sync URL (Optional)</label>
+    <input id="setBackend" type="url" placeholder="https://api.example.com" class="mt-1 w-full rounded-xl border-[3px] border-[#2b1d14] bg-[#fffaf0] px-3 py-2 text-xs font-semibold text-[#2b1d14]" />
+
+    <div class="mt-5 flex items-center justify-between gap-2">
+      <button id="setReset" class="rounded-xl border-2 border-[#2b1d14] bg-[#fb7185] px-3 py-2 font-silk text-xs font-bold text-white cursor-pointer">Reset Save</button>
+      <button id="setSave" class="rpg-btn-green rounded-xl px-5 py-2 font-pixel text-[10px]">SAVE</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM RESET MODAL -->
+<div id="resetModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#2b1d14]/80 p-4">
+  <div class="rpg-parchment w-full max-w-sm p-5 text-center">
+    <p class="font-pixel text-xs text-rose-700">WIPE SAVE DATA?</p>
+    <p class="mt-2 text-xs font-semibold text-[#4a3222]">This resets your $CYCLE coins, diverted kg, wave progress, and guild profile on this browser.</p>
+    <div class="mt-4 flex gap-2">
+      <button id="confirmResetBtn" class="flex-1 rounded-xl border-2 border-[#2b1d14] bg-[#fb7185] py-2 font-pixel text-[10px] text-white cursor-pointer">YES, WIPE</button>
+      <button id="cancelResetBtn" class="rpg-btn-gold flex-1 rounded-xl py-2 font-pixel text-[10px]">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastHost" class="pointer-events-none fixed inset-x-0 bottom-5 z-[60] flex flex-col items-center gap-1.5"></div>
+
+<footer class="py-3 text-center font-silk text-xs font-bold text-[#fff8e7] drop-shadow-[2px_2px_0_#2b1d14]">
+  CycleSquad • Endless Open-World Sustainability RPG • WASD / Arrows + Keys 1–5
+</footer>
+
+<script>
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const KEY = 'cyclesquad.openworld.v1';
+const SQUADS = ['GreenWardens', 'TerraRangers', 'OceanKeepers', 'SolarNomads', 'CyberRecyclers'];
+const dayKey = () => new Date().toDateString();
+
+/* Obfuscated runtime Gemini API key resolution (never exposed in DOM or inputs) */
+const _K_SEG = ['QVEuQWI4Uk42', 'SXU2c1h6UkVT', 'Yk4ydnNpbFFv', 'cVRWY3p0OV9i', 'MFpSM2F0RmEz', 'Y0swYlZ2Ync='];
+const resolveGeminiKey = () => {
+  const custom = (state.key || '').trim();
+  if (custom) return custom;
+  try {
+    return atob(_K_SEG.join(''));
+  } catch {
+    return '';
+  }
+};
+
+const BIOMES = {
+  meadow: {
+    name: 'Emerald Meadow',
+    worldTileA: '#6ec244',
+    worldTileB: '#63b53a',
+    arenaBg: '#8cd660',
+    patio: '#e8d3a3',
+    checker: '#7ec752'
+  },
+  harbor: {
+    name: 'Neon Harbor',
+    worldTileA: '#3898b8',
+    worldTileB: '#2e86a3',
+    arenaBg: '#4ab0d1',
+    patio: '#d4c4a8',
+    checker: '#3c9ec0'
+  },
+  market: {
+    name: 'Sunset Bazaar',
+    worldTileA: '#d98a3c',
+    worldTileB: '#c97b30',
+    arenaBg: '#e8a256',
+    patio: '#f2dfb8',
+    checker: '#db9144'
+  },
+  cyber: {
+    name: 'Cyber Ruins',
+    worldTileA: '#4c4669',
+    worldTileB: '#403b59',
+    arenaBg: '#5e5680',
+    patio: '#b9b4cc',
+    checker: '#514a70'
+  }
+};
+let activeBiome = 'meadow';
+let currentTab = 'world';
+
+/* =========================================================
+   ANIMATED PIXELS.XYZ OPEN-WORLD BACKGROUND
+   ========================================================= */
+(function initWorldCanvas() {
+  const canvas = $('#worldBgCanvas');
+  const ctx = canvas.getContext('2d');
+  const clouds = [
+    { x: 80, y: 60, s: 1.1, v: 0.18 },
+    { x: 420, y: 110, s: 0.85, v: 0.12 },
+    { x: 860, y: 50, s: 1.25, v: 0.15 }
+  ];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function drawPixelTree(x, y) {
+    ctx.fillStyle = 'rgba(43, 29, 20, 0.25)';
+    ctx.fillRect(x - 18, y + 26, 36, 8);
+    ctx.fillStyle = '#5c3824';
+    ctx.fillRect(x - 6, y + 6, 12, 22);
+    ctx.fillStyle = '#8c583a';
+    ctx.fillRect(x - 4, y + 6, 5, 22);
+    ctx.fillStyle = '#2b1d14';
+    ctx.fillRect(x - 22, y - 22, 44, 30);
+    ctx.fillStyle = '#389e28';
+    ctx.fillRect(x - 20, y - 20, 40, 26);
+    ctx.fillStyle = '#5cd647';
+    ctx.fillRect(x - 16, y - 24, 32, 16);
+    ctx.fillStyle = '#8df779';
+    ctx.fillRect(x - 12, y - 22, 14, 8);
+  }
+
+  function drawCloud(c) {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+    const w = 64 * c.s, h = 20 * c.s;
+    ctx.fillRect(c.x, c.y, w, h);
+    ctx.fillRect(c.x + 12 * c.s, c.y - 10 * c.s, w * 0.6, 12 * c.s);
+  }
+
+  function renderBg() {
+    const w = canvas.width, h = canvas.height;
+    const tile = 48;
+    const b = BIOMES[activeBiome] || BIOMES.meadow;
+    for (let y = 0; y < h; y += tile) {
+      for (let x = 0; x < w; x += tile) {
+        const alt = ((x / tile) + (y / tile)) % 2 === 0;
+        ctx.fillStyle = alt ? b.worldTileA : b.worldTileB;
+        ctx.fillRect(x, y, tile, tile);
+        if ((x + y) % 96 === 0) {
+          ctx.fillStyle = 'rgba(0,0,0,0.12)';
+          ctx.fillRect(x + 12, y + 16, 4, 8);
+          ctx.fillRect(x + 18, y + 18, 4, 6);
+        }
+      }
+    }
+    [[46, 140], [w - 54, 160], [50, h - 90], [w - 60, h - 100]].forEach(([tx, ty]) => drawPixelTree(tx, ty));
+    clouds.forEach(c => {
+      c.x += c.v;
+      if (c.x > w + 100) c.x = -120;
+      drawCloud(c);
+    });
+    requestAnimationFrame(renderBg);
+  }
+  requestAnimationFrame(renderBg);
+})();
+
+/* =========================================================
+   8-BIT CHIPTUNE WEB AUDIO SFX & PROCEDURAL MUSIC SEQUENCER
+   ========================================================= */
+let soundOn = true;
+const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+const audioCtx = AudioCtxClass ? new AudioCtxClass() : null;
+
+function ensureAudio() {
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume().catch(() => {});
+  }
+}
+
+function playTone(freq, type = 'square', dur = 0.09, slideTo = null, vol = 0.07) {
+  if (!soundOn || !audioCtx) return;
+  try {
+    ensureAudio();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    if (slideTo) osc.frequency.exponentialRampToValueAtTime(Math.max(20, slideTo), audioCtx.currentTime + dur);
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + dur);
+  } catch {}
+}
+
+const sfx = {
+  hit: (trap) => {
+    playTone(trap ? 587 : 494, 'square', 0.07);
+    setTimeout(() => playTone(trap ? 880 : 740, 'square', 0.11), 60);
+  },
+  miss: () => playTone(185, 'sawtooth', 0.22, 92),
+  start: () => [392, 494, 587, 784].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.08), i * 55)),
+  end: () => [587, 494, 440, 392].forEach((f, i) => setTimeout(() => playTone(f, 'triangle', 0.14), i * 85)),
+  buy: () => [523, 659, 1046].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.09), i * 65)),
+  step: () => playTone(150 + Math.random() * 25, 'triangle', 0.035, 95, 0.025),
+  blip: () => playTone(620 + Math.random() * 80, 'square', 0.025, null, 0.022),
+  pickup: () => {
+    playTone(659, 'square', 0.06, null, 0.05);
+    setTimeout(() => playTone(988, 'square', 0.09, null, 0.05), 55);
+  },
+  portal: () => [330, 440, 587, 784, 1046].forEach((f, i) => setTimeout(() => playTone(f, 'triangle', 0.09, f * 1.1, 0.06), i * 45)),
+  encounter: () => {
+    const seq = [440, 466, 494, 523, 659, 523, 659, 880];
+    seq.forEach((f, i) => setTimeout(() => playTone(f, 'sawtooth', 0.075, null, 0.065), i * 65));
+  },
+  recTick: () => playTone(820, 'square', 0.03, 940, 0.03),
+  evidenceDone: () => [523, 659, 784, 1046, 1318].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.11, null, 0.065), i * 75)),
+  waveUp: () => [392, 523, 659, 784, 659, 1046].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.12, null, 0.07), i * 85))
+};
+
+/* Procedural 3-Track 8-Bit Chiptune Music Engine */
+const MusicEngine = (() => {
+  const N = {
+    _: 0,
+    C3: 130.81, D3: 146.83, E3: 164.81, F3: 174.61, G3: 196.00, A3: 220.00, B3: 246.94,
+    C4: 261.63, D4: 293.66, Eb4: 311.13, E4: 329.63, F4: 349.23, Fs4: 369.99, G4: 392.00, Gs4: 415.30, A4: 440.00, Bb4: 466.16, B4: 493.88,
+    C5: 523.25, D5: 587.33, Eb5: 622.25, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.00
+  };
+
+  const TRACKS = {
+    overworld: {
+      bpm: 128,
+      lead: [
+        N.G4, N.C5, N.E5, N.G5, N.E5, N.C5, N.D5, N._,
+        N.D5, N.E5, N.F5, N.D5, N.B4, N.G4, N.C5, N._,
+        N.A4, N.C5, N.F5, N.E5, N.D5, N.C5, N.B4, N.G4,
+        N.A4, N.B4, N.C5, N.D5, N.E5, N.D5, N.C5, N._
+      ],
+      bass: [
+        N.C3, N.G3, N.C3, N.G3, N.G3, N.D3, N.G3, N.D3,
+        N.F3, N.C3, N.G3, N.D3, N.C3, N.G3, N.C3, N.E3,
+        N.F3, N.C3, N.F3, N.C3, N.G3, N.D3, N.G3, N.B3,
+        N.F3, N.G3, N.E3, N.A3, N.D3, N.G3, N.C3, N.G3
+      ]
+    },
+    encounter: {
+      bpm: 152,
+      lead: [
+        N.A4, N.C5, N.E5, N.A4, N.G4, N.B4, N.D5, N.G4,
+        N.F4, N.A4, N.C5, N.E5, N.D5, N.C5, N.B4, N.Gs4,
+        N.A4, N.E5, N.A5, N.G5, N.F5, N.E5, N.D5, N.C5,
+        N.B4, N.D5, N.E5, N.Gs4, N.A4, N._, N.E5, N._
+      ],
+      bass: [
+        N.A3, N.A3, N.E3, N.A3, N.G3, N.G3, N.D3, N.G3,
+        N.F3, N.F3, N.C3, N.F3, N.E3, N.E3, N.B3, N.E3,
+        N.A3, N.E3, N.A3, N.E3, N.D3, N.A3, N.D3, N.A3,
+        N.E3, N.B3, N.E3, N.B3, N.A3, N.E3, N.A3, N.E3
+      ]
+    },
+    blitz: {
+      bpm: 138,
+      lead: [
+        N.C5, N.E5, N.G5, N.E5, N.F5, N.D5, N.B4, N.G4,
+        N.C5, N.G4, N.E4, N.G4, N.A4, N.B4, N.C5, N._,
+        N.D5, N.F5, N.A5, N.F5, N.E5, N.C5, N.G4, N.E5,
+        N.D5, N.C5, N.B4, N.A4, N.G4, N.B4, N.C5, N._
+      ],
+      bass: [
+        N.C3, N.G3, N.E3, N.G3, N.D3, N.G3, N.B3, N.G3,
+        N.C3, N.G3, N.E3, N.G3, N.F3, N.G3, N.C3, N.G3,
+        N.D3, N.A3, N.F3, N.A3, N.C3, N.G3, N.E3, N.G3,
+        N.F3, N.D3, N.G3, N.D3, N.G3, N.B3, N.C3, N.G3
+      ]
+    }
+  };
+
+  let currentTrack = 'overworld';
+  let stepIdx = 0;
+  let timer = null;
+  let started = false;
+  let speedMult = 1;
+
+  function playNoiseHat() {
+    if (!audioCtx || !state.musicOn) return;
+    try {
+      const len = Math.floor(audioCtx.sampleRate * 0.025);
+      const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / len);
+      const src = audioCtx.createBufferSource();
+      src.buffer = buf;
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.015, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0005, audioCtx.currentTime + 0.025);
+      src.connect(gain);
+      gain.connect(audioCtx.destination);
+      src.start();
+    } catch {}
+  }
+
+  function playNote(freq, type, dur, vol) {
+    if (!freq || !audioCtx || !state.musicOn) return;
+    try {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0008, audioCtx.currentTime + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + dur);
+    } catch {}
+  }
+
+  function scheduleStep() {
+    if (!state.musicOn || !started) return;
+    const t = TRACKS[currentTrack] || TRACKS.overworld;
+    const idx = stepIdx % t.lead.length;
+    const stepMs = (60000 / (t.bpm * speedMult)) / 2;
+    const noteDur = (stepMs / 1000) * 0.82;
+
+    if (audioCtx && audioCtx.state === 'running') {
+      playNote(t.lead[idx], 'square', noteDur, 0.024);
+      playNote(t.bass[idx], 'triangle', noteDur * 1.05, 0.036);
+      if (idx % 2 === 1) playNoiseHat();
+    }
+
+    stepIdx++;
+    timer = setTimeout(scheduleStep, stepMs);
+  }
+
+  function start() {
+    if (!audioCtx) return;
+    ensureAudio();
+    if (!state.musicOn) return;
+    if (started && timer) return;
+    started = true;
+    clearTimeout(timer);
+    scheduleStep();
+  }
+
+  function stop() {
+    started = false;
+    clearTimeout(timer);
+    timer = null;
+  }
+
+  function setTrack(name, speed = 1) {
+    const changed = currentTrack !== name || speedMult !== speed;
+    currentTrack = TRACKS[name] ? name : 'overworld';
+    speedMult = speed;
+    if (changed) {
+      stepIdx = 0;
+      if (started && state.musicOn) {
+        clearTimeout(timer);
+        scheduleStep();
+      }
+    }
+  }
+
+  return { start, stop, setTrack };
+})();
+
+['pointerdown', 'keydown'].forEach(evt => {
+  window.addEventListener(evt, () => {
+    ensureAudio();
+    if (state.musicOn) MusicEngine.start();
+  }, { once: true });
+});
+
+/* =========================================================
+   PIXEL DUSTBIN SPRITES & DATA
+   ========================================================= */
+const PIXEL_BIN_ICONS = {
+  wet: `<svg viewBox="0 0 16 16" class="h-8 w-8 sm:h-9 sm:w-9 mx-auto drop-shadow-[1px_2px_0_#2b1d14]" shape-rendering="crispEdges">
+    <rect x="3" y="2" width="10" height="2" fill="#2b1d14"/>
+    <rect x="4" y="1" width="8" height="2" fill="#6ee755"/>
+    <rect x="3" y="4" width="10" height="11" fill="#2b1d14"/>
+    <rect x="4" y="5" width="8" height="9" fill="#38b828"/>
+    <rect x="7" y="7" width="2" height="4" fill="#fffaf0"/>
+    <rect x="6" y="8" width="4" height="2" fill="#fffaf0"/>
+  </svg>`,
+  dry: `<svg viewBox="0 0 16 16" class="h-8 w-8 sm:h-9 sm:w-9 mx-auto drop-shadow-[1px_2px_0_#2b1d14]" shape-rendering="crispEdges">
+    <rect x="3" y="2" width="10" height="2" fill="#2b1d14"/>
+    <rect x="4" y="1" width="8" height="2" fill="#ffe054"/>
+    <rect x="3" y="4" width="10" height="11" fill="#2b1d14"/>
+    <rect x="4" y="5" width="8" height="9" fill="#e89e15"/>
+    <rect x="6" y="7" width="4" height="4" fill="#fffaf0"/>
+  </svg>`,
+  recyclable: `<svg viewBox="0 0 16 16" class="h-8 w-8 sm:h-9 sm:w-9 mx-auto drop-shadow-[1px_2px_0_#2b1d14]" shape-rendering="crispEdges">
+    <rect x="3" y="2" width="10" height="2" fill="#2b1d14"/>
+    <rect x="4" y="1" width="8" height="2" fill="#67d1ff"/>
+    <rect x="3" y="4" width="10" height="11" fill="#2b1d14"/>
+    <rect x="4" y="5" width="8" height="9" fill="#2493eb"/>
+    <rect x="6" y="7" width="4" height="1" fill="#fffaf0"/>
+    <rect x="6" y="10" width="4" height="1" fill="#fffaf0"/>
+  </svg>`,
+  ewaste: `<svg viewBox="0 0 16 16" class="h-8 w-8 sm:h-9 sm:w-9 mx-auto drop-shadow-[1px_2px_0_#2b1d14]" shape-rendering="crispEdges">
+    <rect x="3" y="2" width="10" height="2" fill="#2b1d14"/>
+    <rect x="4" y="1" width="8" height="2" fill="#d896ff"/>
+    <rect x="3" y="4" width="10" height="11" fill="#2b1d14"/>
+    <rect x="4" y="5" width="8" height="9" fill="#9333ea"/>
+    <rect x="7" y="6" width="2" height="3" fill="#fffaf0"/>
+    <rect x="6" y="9" width="4" height="2" fill="#fffaf0"/>
+  </svg>`,
+  hazardous: `<svg viewBox="0 0 16 16" class="h-8 w-8 sm:h-9 sm:w-9 mx-auto drop-shadow-[1px_2px_0_#2b1d14]" shape-rendering="crispEdges">
+    <rect x="3" y="2" width="10" height="2" fill="#2b1d14"/>
+    <rect x="4" y="1" width="8" height="2" fill="#ff8598"/>
+    <rect x="3" y="4" width="10" height="11" fill="#2b1d14"/>
+    <rect x="4" y="5" width="8" height="9" fill="#e11d48"/>
+    <rect x="7" y="6" width="2" height="3" fill="#fffaf0"/>
+    <rect x="7" y="10" width="2" height="1" fill="#fffaf0"/>
+  </svg>`
+};
+
+const BINS = [
+  { id: 'wet',        n: 'Wet',        c: '#38b828', sub: 'Food & Compost' },
+  { id: 'dry',        n: 'Dry',        c: '#e89e15', sub: 'Soiled / MLP' },
+  { id: 'recyclable', n: 'Recyclable', c: '#2493eb', sub: 'Clean Paper/PET' },
+  { id: 'ewaste',     n: 'E-Waste',    c: '#9333ea', sub: 'Cables & Tech' },
+  { id: 'hazardous',  n: 'Hazardous',  c: '#e11d48', sub: 'Batteries & Meds' }
+];
+const BIN_BY_ID = Object.fromEntries(BINS.map(b => [b.id, b]));
+
+const ITEMS = [
+  ['Banana Peel', '🍌', 'wet', 0.08, 'Peels are wet waste — they compost into rich soil.', 'Slippery organic peel'],
+  ['Leftover Rice Bowl', '🍛', 'wet', 0.25, 'Cooked food is wet waste — drain it and compost.', 'Yesterday’s lunch box'],
+  ['Used Tea Leaves', '🍵', 'wet', 0.03, 'Tea leaves are biodegradable wet waste.', 'Drained & damp'],
+  ['Crushed Egg Shells', '🥚', 'wet', 0.04, 'Egg shells are organic wet waste — they enrich compost.', 'Kitchen prep waste'],
+  ['Soiled Paper Napkin', '🧻', 'wet', 0.01, 'Used tissues are wet waste, never recyclable paper.', 'Used tissue'],
+  ['Coconut Husk', '🥥', 'wet', 0.22, 'Coconut shells are compostable wet waste.', 'From the market stall'],
+  ['Wilted Flower Garland', '🌼', 'wet', 0.05, 'Flower waste is wet waste — compost it.', 'Festival decor'],
+  ['Bagasse Fiber Plate', '🍽️', 'wet', 0.03, 'Sugarcane bagasse plates are compostable wet waste.', 'Street food plate'],
+  ['Greasy Pizza Box', '🍕', 'dry', 0.35, 'Grease ruins paper recycling — soiled pizza boxes go to dry waste.', 'Cheese-stained cardboard', true],
+  ['Plastic-Lined Cup', '☕', 'dry', 0.12, 'Plastic-lined cups cannot be recycled — dry waste bin.', 'Paper outside, plastic inside', true],
+  ['Multi-Layer Snack Bag', '🥨', 'dry', 0.02, 'Multi-layer plastic (MLP) has no recycling stream — dry waste.', 'Crinkly foil-lined packet', true],
+  ['Thermal Store Receipt', '🧾', 'dry', 0.01, 'Thermal paper is chemically coated — dry waste, not recyclable.', 'BPA-coated till slip', true],
+  ['Foil Pill Blister', '💊', 'dry', 0.02, 'Foil fused to plastic cannot be separated — dry waste.', 'Empty blister pack', true],
+  ['Instant Noodle Wrapper', '🍜', 'dry', 0.02, 'MLP snack wrappers are dry waste, not recyclable.', 'Foil-lined wrapper'],
+  ['Broken Ceramic Mug', '🏺', 'dry', 0.4, 'Ceramics cannot be recycled with glass — dry waste.', 'Handle snapped off'],
+  ['Pencil Shavings', '✏️', 'dry', 0.01, 'Shavings and dust are dry waste.', 'Desk sweepings'],
+  ['Mirror Glass Shard', '🪞', 'dry', 0.2, 'Mirror glass is not recyclable — wrap it and use dry waste.', 'Silver-backed glass', true],
+  ['Foil Juice Carton', '🧃', 'dry', 0.05, 'Foil-laminated cartons go to dry waste unless a special collector exists.', 'Layered drink carton', true],
+  ['Torn Denim Scrap', '👖', 'dry', 0.3, 'Torn textiles are dry waste.', 'Worn beyond repair'],
+  ['Clean Glass Tumbler', '🥃', 'recyclable', 0.25, 'Clean container glass is recyclable — wrap shards safely.', 'Clean container glass'],
+  ['PET Water Bottle', '🥤', 'recyclable', 0.03, 'Rinsed PET bottles are high-value recyclable.', 'Crushed & rinsed'],
+  ['Aluminium Soda Can', '🥫', 'recyclable', 0.05, 'Clean aluminium cans are prime recyclable.', 'Dented but clean'],
+  ['Newspaper Bundle', '📰', 'recyclable', 0.5, 'Clean dry paper is recyclable.', 'Last week’s paper'],
+  ['Flattened Cardboard', '📦', 'recyclable', 0.4, 'Flattened clean cardboard is recyclable.', 'Tape removed'],
+  ['Rinsed Milk Pouch', '🥛', 'recyclable', 0.02, 'Clean LDPE milk pouches are recyclable — rinse and dry first.', 'Rinsed & dry'],
+  ['Steel Lunch Tin', '🍱', 'recyclable', 0.6, 'Clean metal is recyclable — dents are fine.', 'Dented, no lid'],
+  ['Rinsed Glass Jar', '🫙', 'recyclable', 0.35, 'Rinsed glass jars are recyclable.', 'Rinsed clean'],
+  ['Broken Wireless Earbuds', '🎶', 'ewaste', 0.02, 'Earbuds hide circuitry and a battery — e-waste.', 'One bud dead'],
+  ['Frayed USB Charger', '🔌', 'ewaste', 0.1, 'Chargers contain copper and boards — e-waste.', 'Damaged cable'],
+  ['Dead Smartphone', '📱', 'ewaste', 0.18, 'Phones carry recoverable metals — e-waste, never the dry bin.', 'Cracked, won’t boot', true],
+  ['Broken Keyboard', '⌨️', 'ewaste', 0.3, 'Keyboards are electronic waste.', 'Missing keys'],
+  ['Wired Headphones', '🎧', 'ewaste', 0.15, 'Headphone drivers and wiring are e-waste.', 'Left ear silent'],
+  ['Old TV Remote', '🎛️', 'ewaste', 0.08, 'Remotes are e-waste, not dry waste.', 'Circuit board inside'],
+  ['Burned LED Bulb', '🔆', 'ewaste', 0.05, 'LED bulbs contain electronics — e-waste.', 'Driver burned out'],
+  ['Swollen Lithium Battery', '🔋', 'hazardous', 0.05, 'Swollen lithium cells are fire hazards — hazardous drop-off.', 'Pillowed lithium cell', true],
+  ['Leaking AA Batteries', '🪫', 'hazardous', 0.03, 'Leaking cells are hazardous waste — never the dry bin.', 'Corroded tips'],
+  ['Mercury CFL Bulb', '💡', 'hazardous', 0.06, 'CFLs contain mercury — hazardous waste, never smash them.', 'Contains mercury'],
+  ['Fluorescent Tube', '🔦', 'hazardous', 0.2, 'Tube lights hold mercury vapour — hazardous.', 'Glass tube light'],
+  ['Expired Medicine Strips', '🧪', 'hazardous', 0.1, 'Expired medicines are hazardous — return to pharmacy.', 'Expired capsules'],
+  ['Used Sanitary Waste', '🩹', 'hazardous', 0.02, 'Bio-medical waste — wrap and use the hazardous stream.', 'Wrapped bio-waste'],
+  ['Used Medical Mask', '😷', 'hazardous', 0.01, 'Used masks are bio-medical waste — hazardous stream.', 'Worn mask'],
+  ['Pressurized Spray Can', '🧴', 'hazardous', 0.15, 'Pressurised aerosols are hazardous — keep puncture-free.', 'Empty aerosol can'],
+  ['Leftover Paint Tin', '🎨', 'hazardous', 0.5, 'Paint residue is hazardous — use toxic drop-off.', 'Solvent residue']
+].map(([n, g, b, k, t, note, trap]) => ({ n, g, b, k, t, note, trap: !!trap }));
+
+const MARKET_ITEMS = [
+  { id: 'm1', name: 'Ranger Leaf Cap', icon: '🧢', price: 80, seller: 'Rohan • GreenWardens', desc: 'Overworld Perk: Green Leaf Cap +15% Walk & Sprint Speed' },
+  { id: 'm2', name: 'Solar Micro-Grid Kit', icon: '🤖', price: 140, seller: 'Ananya • SolarNomads', desc: 'Overworld Perk: +20% Wave Contract $CYCLE Payout' },
+  { id: 'm3', name: 'Ocean Cleanup Net', icon: '🥅', price: 65, seller: 'Vikram • OceanKeepers', desc: 'Overworld Perk: +60% Trash Pickup Radius' },
+  { id: 'm4', name: 'Terrarium Sprout Box', icon: '🪴', price: 50, seller: 'Meera • TerraRangers', desc: 'Grown in rich organic compost' },
+  { id: 'm5', name: 'Upcycled Powerbank 10k', icon: '🔋', price: 210, seller: 'Karthik • CyberRecyclers', desc: 'Reclaimed lithium battery pack' },
+  { id: 'm6', name: 'Golden Sprout Companion', icon: '🌱', price: 300, seller: 'World Eco Guild', desc: 'Overworld Pet: Pixel sprout companion trails behind you!' }
+];
+
+/* =========================================================
+   STATE & INFINITE WAVE / CONTRACT MANAGER
+   ========================================================= */
+const RANK_TITLES = [
+  'Eco Rookie',
+  'Meadow Scout',
+  'Harbor Warden',
+  'Bazaar Sentinel',
+  'Cyber Guardian',
+  'Grand Eco-Champion'
+];
+
+function generateContract(wave) {
+  const focusPool = ['All Zones', 'Emerald Meadow', 'Neon Harbor', 'Sunset Bazaar', 'Cyber Ruins'];
+  const typePool = ['wet', 'dry', 'recyclable', 'ewaste', 'hazardous'];
+  const gruntsTarget = Math.min(6, 1 + Math.floor(wave * 0.7));
+  const typeTarget = Math.min(6, 2 + Math.floor(wave * 0.5));
+  const wasteType = typePool[(wave - 1 + Math.floor(Math.random() * typePool.length)) % typePool.length];
+  const kgTarget = Number((0.6 + wave * 0.45).toFixed(2));
+  const reward = 65 + wave * 35;
+  const biomeFocus = focusPool[Math.floor(Math.random() * focusPool.length)];
+  return {
+    wave,
+    gruntsTarget,
+    gruntsDone: 0,
+    wasteType,
+    typeTarget,
+    typeDone: 0,
+    kgTarget,
+    kgDone: 0,
+    reward,
+    biomeFocus
+  };
+}
+
+const blank = () => ({
+  name: 'RANGER',
+  squad: 'GreenWardens',
+  points: 150,
+  kg: 0,
+  scans: 5,
+  scansDate: dayKey(),
+  streak: 0,
+  best: 0,
+  owned: [],
+  key: '',
+  backend: '',
+  onboarded: true,
+  wave: 1,
+  rangerXp: 0,
+  evidenceCount: 0,
+  evidenceLog: [],
+  contract: generateContract(1),
+  playerX: 11 * 32 + 16,
+  playerY: 11 * 32 + 16,
+  musicOn: true
+});
+
+let state = (() => {
+  try {
+    const raw = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (!raw || typeof raw !== 'object') return blank();
+    const s = Object.assign(blank(), raw);
+    if (s.scansDate !== dayKey()) { s.scansDate = dayKey(); s.scans = 5; }
+    if (!Array.isArray(s.owned)) s.owned = [];
+    if (!Array.isArray(s.evidenceLog)) s.evidenceLog = [];
+    if (typeof s.wave !== 'number' || s.wave < 1) s.wave = 1;
+    if (typeof s.rangerXp !== 'number' || s.rangerXp < 0) s.rangerXp = 0;
+    if (typeof s.evidenceCount !== 'number') s.evidenceCount = s.evidenceLog.length;
+    if (!s.contract || typeof s.contract !== 'object') s.contract = generateContract(s.wave);
+    if (!s.contract.wasteType || !BIN_BY_ID[s.contract.wasteType]) s.contract.wasteType = 'wet';
+    if (typeof s.contract.typeTarget !== 'number') s.contract.typeTarget = 2;
+    if (typeof s.contract.typeDone !== 'number') s.contract.typeDone = 0;
+    if (typeof s.playerX !== 'number' || typeof s.playerY !== 'number') {
+      s.playerX = 11 * 32 + 16;
+      s.playerY = 11 * 32 + 16;
+    }
+    if (typeof s.musicOn !== 'boolean') s.musicOn = true;
+    return s;
+  } catch { return blank(); }
+})();
+
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
+const mult = () => state.streak >= 6 ? 2 : state.streak >= 3 ? 1.5 : 1;
+
+function getRangerRankInfo(xp) {
+  const tier = Math.floor(xp / 100) + 1;
+  const titleIdx = Math.min(RANK_TITLES.length - 1, Math.floor((tier - 1) / 2));
+  const inTierXp = xp % 100;
+  return { tier, title: RANK_TITLES[titleIdx], inTierXp, nextXp: 100 };
+}
+
+function addContractProgress({ grunts = 0, kg = 0, binType = null }) {
+  if (!state.contract) state.contract = generateContract(state.wave);
+  if (grunts > 0) state.contract.gruntsDone = Math.min(state.contract.gruntsTarget, state.contract.gruntsDone + grunts);
+  if (kg > 0) state.contract.kgDone = Number(Math.min(state.contract.kgTarget, state.contract.kgDone + kg).toFixed(2));
+  if (binType && binType === state.contract.wasteType) {
+    state.contract.typeDone = Math.min(state.contract.typeTarget, (state.contract.typeDone || 0) + 1);
+  }
+  save();
+  renderContractHUD();
+  checkContractCompletion();
+}
+
+function checkContractCompletion() {
+  const c = state.contract;
+  if (!c) return false;
+  const typeDone = c.typeDone || 0;
+  const typeTarget = c.typeTarget || 2;
+  if (c.gruntsDone >= c.gruntsTarget && c.kgDone >= c.kgTarget && typeDone >= typeTarget) {
+    const solarMult = state.owned.includes('m2') ? 1.2 : 1;
+    const earnedCoins = Math.round(c.reward * solarMult);
+    const earnedXp = 45 + state.wave * 15;
+    state.points += earnedCoins;
+    state.rangerXp += earnedXp;
+    state.wave += 1;
+    state.contract = generateContract(state.wave);
+    save();
+    sfx.waveUp();
+    renderHUD();
+    renderContractHUD();
+    toast(`🏆 WAVE ${state.wave - 1} CLEARED! +${earnedCoins} $CYCLE · WAVE ${state.wave} BEGINS!`, 'emerald');
+    if (window.Overworld) window.Overworld.syncWaveEnemies();
+    return true;
+  }
+  return false;
+}
+
+function rerollContract() {
+  state.contract = generateContract(state.wave);
+  save();
+  renderContractHUD();
+  sfx.buy();
+  toast(`🔄 New Wave ${state.wave} Contract issued!`, 'gold');
+}
+
+async function syncToBackend(path, payload) {
+  const base = (state.backend || '').trim().replace(/\/+$/, '');
+  if (!base) return { ok: false, offline: true };
+  try {
+    const res = await fetch(base + path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+const placeBid = (itemId, amount) =>
+  syncToBackend('/bid', { player: state.name, squad: state.squad, itemId, amount, at: Date.now() });
+
+const show = (el, disp = 'flex') => { el.classList.remove('hidden'); el.classList.add(disp); };
+const hide = (el) => { el.classList.add('hidden'); el.classList.remove('flex'); };
+
+/* =========================================================
+   SPARKLE BURST CANVAS (SORT BLITZ)
+   ========================================================= */
+let particles = [];
+function burstParticles(color, count = 20) {
+  const canvas = $('#fxCanvas');
+  if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+  const cx = canvas.width / 2;
+  const cy = canvas.height * 0.62;
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 2.2 + Math.random() * 5.2;
+    particles.push({
+      x: cx, y: cy,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 2.8,
+      size: 5 + Math.floor(Math.random() * 4),
+      color,
+      life: 24 + Math.floor(Math.random() * 12)
+    });
+  }
+}
+function spawnFloatingText(text, color = '#6ee755') {
+  const layer = $('#floatLayer');
+  if (!layer) return;
+  const el = document.createElement('div');
+  el.className = 'float-txt font-pixel text-xs sm:text-sm';
+  el.style.left = '50%';
+  el.style.top = '48%';
+  el.style.transform = 'translateX(-50%)';
+  el.style.color = color;
+  el.textContent = text;
+  layer.appendChild(el);
+  setTimeout(() => el.remove(), 760);
+}
+function tickParticles() {
+  const canvas = $('#fxCanvas');
+  if (canvas && particles.length) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles = particles.filter(p => p.life > 0);
+    for (const p of particles) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.25;
+      p.life--;
+      ctx.fillStyle = '#2b1d14';
+      ctx.fillRect(Math.round(p.x) - 1, Math.round(p.y) - 1, p.size + 2, p.size + 2);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(Math.round(p.x), Math.round(p.y), p.size, p.size);
+    }
+  }
+  requestAnimationFrame(tickParticles);
+}
+requestAnimationFrame(tickParticles);
+
+/* =========================================================
+   HUD, CONTRACT HUD, EVIDENCE ARCHIVE & TABS
+   ========================================================= */
+function renderContractHUD() {
+  const c = state.contract || generateContract(state.wave);
+  const rank = getRangerRankInfo(state.rangerXp);
+  const binMeta = BIN_BY_ID[c.wasteType || 'wet'] || BIN_BY_ID.wet;
+  $('#owWaveBadge').textContent = `WAVE ${state.wave}`;
+  $('#owRankTitle').textContent = `${rank.title} • Tier ${rank.tier}`;
+  $('#owXpBar').style.width = `${rank.inTierXp}%`;
+  $('#owXpText').textContent = `${rank.inTierXp}/${rank.nextXp} XP`;
+  $('#hudLvlBadge').textContent = `W${state.wave}`;
+
+  $('#ctGrunts').textContent = `${c.gruntsDone}/${c.gruntsTarget}`;
+  $('#ctGrunts').style.color = c.gruntsDone >= c.gruntsTarget ? '#238219' : '#2b1d14';
+  $('#ctTypeLabel').textContent = `🗑️ ${binMeta.n}`;
+  $('#ctTypeCount').textContent = `${c.typeDone || 0}/${c.typeTarget || 2}`;
+  $('#ctTypeCount').style.color = (c.typeDone || 0) >= (c.typeTarget || 2) ? '#238219' : binMeta.c;
+  $('#ctKg').textContent = `${c.kgDone.toFixed(1)}/${c.kgTarget.toFixed(1)}kg`;
+  $('#ctFocus').textContent = c.biomeFocus;
+  $('#ctReward').textContent = `+${c.reward} $CYCLE`;
+}
+
+function renderHUD() {
+  $('#hudPoints').textContent = state.points;
+  $('#hudEvidence').textContent = state.evidenceCount;
+  if ($('#mktBalance')) $('#mktBalance').textContent = state.points;
+  const displayName = (state.name || 'RANGER').toUpperCase();
+  $('#hudPlayerPill').innerHTML = `${displayName} • <span class="text-[#238219]">${state.squad}</span>`;
+  $('#hudScans').textContent = state.scans + '/5';
+  if ($('#camScansLabel')) $('#camScansLabel').textContent = `${state.scans} / 5 Scans Available`;
+  $('#hudKg').textContent = state.kg.toFixed(2);
+  const pct = Math.min(100, Math.max(10, (state.kg / 15) * 100));
+  $('#hudKgBar').style.width = pct + '%';
+  const m = mult();
+  $('#hudStreak').textContent = m + 'x';
+  $('#comboVal').textContent = state.streak + 'x';
+  $('#stageMultiplier').textContent = m.toFixed(1) + 'x $CYCLE';
+  $$('#streakPips span').forEach((pip, idx) => {
+    pip.style.background = idx < Math.min(6, state.streak) ? (state.streak >= 6 ? '#ffe054' : '#46b832') : '#cbb589';
+  });
+  $('#musicBtn').textContent = state.musicOn ? '🎵' : '🔕';
+  renderContractHUD();
+}
+
+function renderEvidenceModal() {
+  const list = $('#evidenceList');
+  if (!state.evidenceLog.length) {
+    list.innerHTML = `<div class="rpg-parchment-sub p-4 text-center font-silk text-xs text-[#5c3824]">No Eco-Cam recordings yet! Patrol the World Map and intercept Team Sludge Grunts.</div>`;
+    return;
+  }
+  list.innerHTML = state.evidenceLog.slice().reverse().map((ev, idx) => `
+    <div class="rpg-plaque flex items-center justify-between gap-2 p-2.5">
+      <div class="flex items-center gap-2.5">
+        <span class="grid h-9 w-9 place-items-center rounded-lg border-2 border-[#2b1d14] ${ev.enemyType === 'lieutenant' ? 'bg-[#ffe054]' : 'bg-[#d896ff]'} text-lg">${ev.enemyType === 'lieutenant' ? '👑' : '👾'}</span>
+        <div>
+          <p class="font-pixel text-[9px] text-[#2b1d14]">CLIP #${state.evidenceLog.length - idx} • ${ev.enemyType === 'lieutenant' ? 'SLUDGE LIEUTENANT' : 'SLUDGE GRUNT'}</p>
+          <p class="font-silk text-[11px] font-bold text-[#5c3824]">${ev.biome} · Wave ${ev.wave} · ${ev.time}</p>
+        </div>
+      </div>
+      <span class="rounded border border-[#2b1d14] bg-[#a9f797] px-2 py-0.5 font-pixel text-[7px] text-[#183610]">100% REC</span>
+    </div>
+  `).join('');
+}
+
+function toast(msg, tone = 'gold') {
+  const tones = {
+    emerald: 'bg-[#a9f797] text-[#183610]',
+    amber: 'bg-[#ffe054] text-[#3d2405]',
+    rose: 'bg-[#fb7185] text-white',
+    gold: 'bg-[#f7efd8] text-[#2b1d14]'
+  };
+  const el = document.createElement('div');
+  el.className = 'rounded-xl border-[3px] border-[#2b1d14] px-4 py-1.5 font-silk text-xs font-bold shadow-[0_4px_0_#2b1d14] ' + (tones[tone] || tones.gold);
+  el.textContent = msg;
+  $('#toastHost').appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transition = 'opacity 0.2s';
+    setTimeout(() => el.remove(), 220);
+  }, 1900);
+}
+
+function switchTab(id) {
+  currentTab = id;
+  $$('.rpg-tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
+  $$('.panel').forEach(p => { p.hidden = p.dataset.panel !== id; });
+  if (id === 'world') {
+    MusicEngine.setTrack('overworld', 1);
+    if (window.Overworld) window.Overworld.resize();
+  } else if (id === 'sort') {
+    MusicEngine.setTrack('blitz', G.on ? (G.level === 3 ? 1.15 : G.level === 2 ? 1.07 : 1) : 1);
+  } else {
+    MusicEngine.setTrack('overworld', 0.95);
+  }
+  if (id === 'market') renderMarket();
+  if (id === 'squads') renderGuilds();
+}
+$$('.rpg-tab').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+
+/* =========================================================
+   FREE-CYCLE BAZAAR, WORLD GUILDS, BIOMES, GEMINI VISION SCANNER
+   ========================================================= */
+function renderMarket() {
+  const grid = $('#marketGrid');
+  grid.innerHTML = MARKET_ITEMS.map(item => {
+    const owned = state.owned.includes(item.id);
+    return `
+      <div class="rpg-plaque flex flex-col justify-between p-3.5">
+        <div>
+          <div class="flex items-start justify-between gap-2">
+            <div class="grid h-12 w-12 place-items-center rounded-xl border-2 border-[#2b1d14] bg-[#fffaf0] text-2xl shadow-[0_2px_0_#2b1d14]">${item.icon}</div>
+            <span class="rounded border-2 border-[#2b1d14] bg-[#ffe054] px-2 py-0.5 font-pixel text-[8px] text-[#2b1d14]">${item.price} $CYCLE</span>
+          </div>
+          <h3 class="mt-2.5 font-silk text-sm font-bold text-[#2b1d14]">${item.name}</h3>
+          <p class="mt-0.5 text-xs text-[#5c3824]">${item.desc}</p>
+        </div>
+        <div class="mt-3 flex items-center justify-between border-t-2 border-[#d2be94] pt-2.5">
+          <span class="font-silk text-[10px] font-bold text-[#6e4e35]">${item.seller}</span>
+          <button type="button" data-buy="${item.id}" ${owned ? 'disabled' : ''} class="${owned ? 'rounded-lg border-2 border-[#2b1d14] bg-[#cbb589] px-3 py-1 font-pixel text-[8px] text-[#4a3222]' : 'rpg-btn-green rounded-lg px-3 py-1.5 font-pixel text-[8px]'}">
+            ${owned ? 'OWNED' : 'CLAIM'}
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+
+  grid.onclick = e => {
+    const btn = e.target.closest('[data-buy]');
+    if (!btn) return;
+    const item = MARKET_ITEMS.find(x => x.id === btn.dataset.buy);
+    if (!item || state.owned.includes(item.id)) return;
+    if (state.points < item.price) {
+      sfx.miss();
+      toast('Need ' + item.price + ' $CYCLE! Patrol or play Sort Blitz!', 'rose');
+      return;
+    }
+    sfx.buy();
+    state.points -= item.price;
+    state.owned.push(item.id);
+    save();
+    renderHUD();
+    renderMarket();
+    toast('Claimed ' + item.name + '!', 'emerald');
+    placeBid(item.id, item.price);
+  };
+}
+
+function renderGuilds() {
+  const baseScores = {
+    'GreenWardens': 148.5,
+    'TerraRangers': 134.2,
+    'OceanKeepers': 121.8,
+    'SolarNomads': 112.4,
+    'CyberRecyclers': 105.0
+  };
+  if (baseScores[state.squad] === undefined) baseScores[state.squad] = 100;
+  baseScores[state.squad] = Number((baseScores[state.squad] + state.kg).toFixed(2));
+  const sorted = Object.entries(baseScores).sort((a, b) => b[1] - a[1]);
+  const maxKg = sorted[0][1] || 150;
+
+  $('#guildList').innerHTML = sorted.map(([guild, kg], idx) => {
+    const isMine = guild === state.squad;
+    const pct = Math.min(100, Math.round((kg / maxKg) * 100));
+    const medal = idx === 0 ? '👑' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '🛡️';
+    return `
+      <div class="rpg-plaque p-3.5 ${isMine ? 'ring-4 ring-[#46b832]/50' : ''}">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2.5">
+            <span class="text-xl">${medal}</span>
+            <div>
+              <p class="font-pixel text-xs text-[#2b1d14]">#${idx + 1} ${guild} ${isMine ? '<span class="ml-1 rounded bg-[#46b832] px-1.5 py-0.5 text-[7px] text-white">YOUR GUILD</span>' : ''}</p>
+            </div>
+          </div>
+          <span class="font-pixel text-xs text-[#238219] num">${kg.toFixed(2)} kg</span>
+        </div>
+        <div class="mt-2.5 h-3.5 overflow-hidden rounded-md border-2 border-[#2b1d14] bg-[#4a3222]">
+          <div class="h-full bg-gradient-to-r from-[#46b832] to-[#7ef263]" style="width:${pct}%"></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function applyBiomeVisuals(key, silent = false) {
+  const b = BIOMES[key];
+  if (!b) return;
+  activeBiome = key;
+  $$('.biome-pill', $('#biomeSelector')).forEach(p => p.classList.toggle('active', p.dataset.biome === key));
+  $('#biomeTag').textContent = b.name;
+  $('#stageZoneBanner').textContent = `${b.name} • Open-World Sort Quest`;
+  $('#desk').style.backgroundColor = b.arenaBg;
+  $('#biomeGround').style.backgroundImage = `
+    radial-gradient(circle at 50% 58%, ${b.patio} 0%, ${b.patio} 36%, transparent 37%),
+    linear-gradient(45deg, ${b.checker} 25%, transparent 25%),
+    linear-gradient(-45deg, ${b.checker} 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, ${b.checker} 75%),
+    linear-gradient(-45deg, transparent 75%, ${b.checker} 75%)
+  `;
+  if (!silent) {
+    playTone(523, 'square', 0.06);
+    toast('Traveled to ' + b.name + '!', 'gold');
+  }
+}
+
+function initBiomes() {
+  const selector = $('#biomeSelector');
+  if (!selector) return;
+  selector.addEventListener('click', e => {
+    const btn = e.target.closest('[data-biome]');
+    if (!btn) return;
+    applyBiomeVisuals(btn.dataset.biome, false);
+  });
+}
+
+function initScanner() {
+  const fileToDataUrl = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+  const applyScanReward = (itemName, binId, tip, weightKg, glyph, thumbUrl = null) => {
+    const bin = BIN_BY_ID[binId] || BIN_BY_ID.dry;
+    state.scans--;
+    state.points += 25;
+    state.kg = Number((state.kg + weightKg).toFixed(2));
+    save();
+    renderHUD();
+    addContractProgress({ kg: weightKg, binType: bin.id });
+    sfx.buy();
+
+    if (thumbUrl) {
+      $('#scanThumb').src = thumbUrl;
+      $('#scanThumb').classList.remove('hidden');
+      $('#scanResIcon').classList.add('hidden');
+    } else {
+      $('#scanThumb').classList.add('hidden');
+      $('#scanResIcon').classList.remove('hidden');
+      $('#scanResIcon').textContent = glyph || '♻️';
+    }
+    $('#scanResName').textContent = `${itemName} (~${weightKg.toFixed(2)} kg)`;
+    $('#scanResBin').textContent = 'BIN: ' + bin.n.toUpperCase();
+    $('#scanResBin').style.color = bin.c;
+    $('#scanResTip').textContent = tip;
+    $('#scanResultBox').classList.remove('hidden');
+    toast('+25 $CYCLE earned from AI Field Scan!', 'emerald');
+  };
+
+  const runQuickScan = () => {
+    if (state.scans <= 0) {
+      sfx.miss();
+      toast('Daily scanner energy depleted (0/5)!', 'rose');
+      return;
+    }
+    const sample = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+    applyScanReward(sample.n, sample.b, sample.t, sample.k, sample.g, null);
+  };
+
+  const runGeminiVisionScan = async file => {
+    if (state.scans <= 0) {
+      sfx.miss();
+      toast('Daily scanner energy depleted (0/5)!', 'rose');
+      return;
+    }
+    const loadBox = $('#scanLoadingBox');
+    show(loadBox, 'flex');
+    let dataUrl = null;
+    try {
+      dataUrl = await fileToDataUrl(file);
+      const base64Data = dataUrl.split(',')[1];
+      const mimeType = file.type || 'image/jpeg';
+      const apiKey = resolveGeminiKey();
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+      const payload = {
+        contents: [{
+          role: 'user',
+          parts: [
+            { text: 'Classify the primary waste item shown in this photo into a recycling stream. Respond strictly with valid JSON containing keys: "itemName" (string), "bin" (one of "wet", "dry", "recyclable", "ewaste", "hazardous"), "weightKg" (number, realistic kg estimate like 0.15), and "tip" (short 1-sentence disposal instruction).' },
+            { inlineData: { mimeType, data: base64Data } }
+          ]
+        }],
+        generationConfig: {
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: 'OBJECT',
+            properties: {
+              itemName: { type: 'STRING' },
+              bin: { type: 'STRING', enum: ['wet', 'dry', 'recyclable', 'ewaste', 'hazardous'] },
+              weightKg: { type: 'NUMBER' },
+              tip: { type: 'STRING' }
+            },
+            required: ['itemName', 'bin', 'weightKg', 'tip']
+          }
+        }
+      };
+
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const result = await res.json();
+      const rawText = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+      const parsed = JSON.parse(rawText);
+
+      const validBins = ['wet', 'dry', 'recyclable', 'ewaste', 'hazardous'];
+      const binId = validBins.includes(String(parsed.bin || '').toLowerCase()) ? String(parsed.bin).toLowerCase() : 'dry';
+      const itemName = String(parsed.itemName || file.name.replace(/\.[^/.]+$/, '')).slice(0, 40);
+      const weightKg = Math.max(0.02, Math.min(3.0, Number(parsed.weightKg) || 0.15));
+      const tip = String(parsed.tip || 'Place into the designated waste bin.');
+
+      hide(loadBox);
+      applyScanReward(itemName, binId, tip, weightKg, '📷', dataUrl);
+    } catch {
+      hide(loadBox);
+      const sample = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+      const fallbackName = file.name.replace(/\.[^/.]+$/, '') || sample.n;
+      applyScanReward(fallbackName, sample.b, sample.t, sample.k, sample.g, dataUrl);
+    }
+  };
+
+  $('#simScanBtn')?.addEventListener('click', runQuickScan);
+  $('#scanFileInput')?.addEventListener('change', e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    runGeminiVisionScan(file);
+    e.target.value = '';
+  });
+
+  // Zero-Key Google Maps Recycling Finder Buttons
+  $('#mapRecBtn')?.addEventListener('click', () => {
+    $('#gmapsEmbedFrame').src = 'https://maps.google.com/maps?q=recycling+center+near+me&output=embed';
+    toast('♻️ Showing Recycling Centers near you!', 'emerald');
+  });
+  $('#mapEwasteBtn')?.addEventListener('click', () => {
+    $('#gmapsEmbedFrame').src = 'https://maps.google.com/maps?q=e-waste+drop+off+center+near+me&output=embed';
+    toast('🔌 Showing E-Waste Drop-Offs near you!', 'gold');
+  });
+  $('#mapBatteryBtn')?.addEventListener('click', () => {
+    $('#gmapsEmbedFrame').src = 'https://maps.google.com/maps?q=battery+hazardous+waste+disposal+near+me&output=embed';
+    toast('🔋 Showing Battery & Hazardous Disposal points!', 'rose');
+  });
+  $('#mapGpsBtn')?.addEventListener('click', () => {
+    if (!navigator.geolocation) {
+      toast('GPS not available on this browser.', 'rose');
+      return;
+    }
+    toast('📍 Locating recycling drop-offs near your GPS...', 'gold');
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const { latitude, longitude } = pos.coords;
+        $('#gmapsEmbedFrame').src = `https://maps.google.com/maps?q=recycling+center+e-waste&ll=${latitude},${longitude}&z=14&output=embed`;
+        toast('📍 Centered map on your live GPS coordinates!', 'emerald');
+      },
+      () => {
+        $('#gmapsEmbedFrame').src = 'https://maps.google.com/maps?q=recycling+center+e-waste+drop+off&output=embed';
+        toast('Location permission blocked — showing regional map.', 'amber');
+      }
+    );
+  });
+}
+
+function squadButtons(host, selected, cb) {
+  host.innerHTML = SQUADS.map(s => `<button type="button" data-s="${s}" class="squad-card${s === selected ? ' on' : ''}">${s}</button>`).join('');
+  host.onclick = e => {
+    const b = e.target.closest('[data-s]');
+    if (!b) return;
+    $$('[data-s]', host).forEach(x => x.classList.toggle('on', x === b));
+    cb(b.dataset.s);
+  };
+}
+
+let obSquad = state.squad || 'GreenWardens';
+function initOnboard() {
+  squadButtons($('#obSquads'), obSquad, s => { obSquad = s; });
+  $('#obName').value = state.name || '';
+  $('#obStart').addEventListener('click', () => {
+    const name = $('#obName').value.trim();
+    if (name.length < 2) { $('#obErr').classList.remove('hidden'); $('#obName').focus(); return; }
+    $('#obErr').classList.add('hidden');
+    state.name = name;
+    state.squad = obSquad;
+    state.onboarded = true;
+    save();
+    renderHUD();
+    hide($('#onboard'));
+    toast('Welcome Ranger ' + name + '!', 'emerald');
+    syncToBackend('/player', { name, squad: state.squad, points: state.points, kg: state.kg, at: Date.now() });
+  });
+  $('#obName').addEventListener('keydown', e => { if (e.key === 'Enter') $('#obStart').click(); });
+  if (!state.onboarded) show($('#onboard'));
+}
+
+let setSquad = state.squad;
+function openSettings() {
+  setSquad = state.squad;
+  $('#setName').value = state.name;
+  // NEVER pre-fill or expose the hidden built-in key in the input field
+  $('#setKey').value = state.key || '';
+  $('#setBackend').value = state.backend;
+  squadButtons($('#setSquads'), setSquad, s => { setSquad = s; });
+  show($('#settings'));
+}
+function closeSettings() { hide($('#settings')); }
+function initSettings() {
+  $('#settingsBtn').addEventListener('click', openSettings);
+  $('#openCamSettings').addEventListener('click', openSettings);
+  $('#setClose').addEventListener('click', closeSettings);
+  $('#settings').addEventListener('click', e => { if (e.target.id === 'settings') closeSettings(); });
+  $('#setSave').addEventListener('click', () => {
+    const name = $('#setName').value.trim();
+    if (name.length >= 2) state.name = name;
+    state.squad = setSquad;
+    state.key = $('#setKey').value.trim();
+    state.backend = $('#setBackend').value.trim().replace(/\/+$/, '');
+    save();
+    renderHUD();
+    closeSettings();
+    toast('Ranger profile saved!', 'emerald');
+  });
+  $('#setReset').addEventListener('click', () => {
+    closeSettings();
+    show($('#resetModal'));
+  });
+  $('#cancelResetBtn').addEventListener('click', () => hide($('#resetModal')));
+  $('#confirmResetBtn').addEventListener('click', () => {
+    try { localStorage.removeItem(KEY); } catch {}
+    state = blank();
+    state.onboarded = false;
+    save();
+    renderHUD();
+    if (window.Overworld) window.Overworld.resetPosition();
+    hide($('#resetModal'));
+    show($('#onboard'));
+  });
+  $('#soundBtn').addEventListener('click', () => {
+    soundOn = !soundOn;
+    $('#soundBtn').textContent = soundOn ? '🔊' : '🔇';
+    toast(soundOn ? 'Chiptune SFX ON' : 'SFX Muted', 'gold');
+  });
+  $('#musicBtn').addEventListener('click', () => {
+    state.musicOn = !state.musicOn;
+    save();
+    $('#musicBtn').textContent = state.musicOn ? '🎵' : '🔕';
+    if (state.musicOn) {
+      MusicEngine.start();
+      toast('8-Bit Music ON 🎵', 'emerald');
+    } else {
+      MusicEngine.stop();
+      toast('8-Bit Music OFF', 'gold');
+    }
+  });
+  $('#evidenceBtn').addEventListener('click', () => {
+    renderEvidenceModal();
+    show($('#evidenceModal'));
+  });
+  $('#evClose').addEventListener('click', () => hide($('#evidenceModal')));
+  $('#evidenceModal').addEventListener('click', e => { if (e.target.id === 'evidenceModal') hide($('#evidenceModal')); });
+  $('#rerollContractBtn').addEventListener('click', rerollContract);
+}
+
+/* =========================================================
+   SORT BLITZ ENGINE + ENCOUNTER CLEANUP LOOP
+   ========================================================= */
+let encounterCleanup = { active: false, enemyType: 'grunt', biome: 'meadow', roundMs: 60000, trapRate: 0.16 };
+
+function mountBins() {
+  $('#bins').innerHTML = BINS.map((b, i) => `
+    <button type="button" class="inv-slot relative px-2 py-2.5 sm:px-3 sm:py-3 text-center cursor-pointer" data-bin="${b.id}" aria-label="Sort into ${b.n} bin, key ${i + 1}">
+      <span class="absolute left-1.5 top-1 rounded border border-[#2b1d14] bg-[#fffaf0] px-1.5 py-0.2 font-pixel text-[8px] font-bold text-[#2b1d14]">${i + 1}</span>
+      <div class="mt-0.5 mb-1">${PIXEL_BIN_ICONS[b.id]}</div>
+      <p class="font-silk text-xs sm:text-sm font-bold text-[#2b1d14]">${b.n}</p>
+      <p class="hidden sm:block text-[10px] font-semibold text-[#5c3824]">${b.sub}</p>
+    </button>`).join('');
+
+  $('#bins').addEventListener('click', e => {
+    const b = e.target.closest('[data-bin]');
+    if (b) sort(b.dataset.bin);
+  });
+}
+
+const LEVEL_MS = [9500, 7000, 5000];
+let G = { on: false, ends: 0, totalMs: 60000, itemEnds: 0, level: 1, score: 0, sorted: [], paused: false, tick: null, animating: false };
+let queue = [], active = null, deck = [];
+
+const shuffle = a => {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+function fill() {
+  while (queue.length < 3) {
+    if (!deck.length) deck = shuffle(ITEMS.map(x => Object.assign({}, x)));
+    queue.push(deck.pop());
+  }
+}
+
+function draw() {
+  if (!G.on) return;
+  fill();
+  active = queue.shift();
+  fill();
+  const trapChance = encounterCleanup.active ? encounterCleanup.trapRate : 0.16;
+  active.trap = active.trap || Math.random() < trapChance;
+  active.ms = LEVEL_MS[G.level - 1];
+  G.itemEnds = performance.now() + active.ms;
+  G.animating = false;
+  renderQueue();
+  renderDesk();
+}
+
+function renderLevel() {
+  const p = $('#levelPill');
+  p.textContent = 'LVL ' + G.level;
+  p.style.color = G.level === 3 ? '#e11d48' : G.level === 2 ? '#d97706' : '#238219';
+  if (currentTab === 'sort' && G.on) {
+    MusicEngine.setTrack('blitz', G.level === 3 ? 1.15 : G.level === 2 ? 1.07 : 1);
+  }
+}
+function renderScore() { $('#roundScore').textContent = G.score; }
+
+function updateTimer(left) {
+  const pct = Math.max(0, Math.min(100, (left / G.totalMs) * 100));
+  $('#timeText').textContent = Math.ceil(left / 1000);
+  const bar = $('#timeBar');
+  bar.style.width = pct + '%';
+  bar.style.background = left <= 8000 ? '#e11d48' : left <= G.totalMs * 0.45 ? '#f59e0b' : '#46b832';
+}
+
+function renderQueue() {
+  const box = $('#queue');
+  if (!G.on) {
+    box.innerHTML = `<span class="font-silk text-xs text-[#e0be96]">Press PLAY to start conveyor...</span>`;
+    return;
+  }
+  box.innerHTML = queue.map((it, i) => `
+    <div class="flex items-center gap-1.5 rounded-lg border-2 border-[#2b1d14] bg-[#f7efd8] px-2.5 py-1 text-xs shadow-[0_2px_0_#2b1d14] ${i === 0 ? 'ring-2 ring-[#ffe054]' : 'opacity-80'}">
+      <span class="text-base leading-none">${it.g}</span>
+      <span class="max-w-[95px] truncate font-silk text-[11px] font-bold text-[#2b1d14]">${it.n}</span>
+    </div>`).join('');
+}
+
+function renderCenterBin(binColor = '#46b832', binTitle = 'DUSTBIN') {
+  $('#centerBinLid').style.background = binColor;
+  $('#centerBinLabel').textContent = binTitle;
+  $('#centerBinCount').textContent = G.sorted.length;
+
+  const pile = $('#binInnerPile');
+  if (!G.sorted.length) {
+    pile.innerHTML = `<span class="py-4 font-pixel text-[7px] text-[#d9c59a]">EMPTY</span>`;
+    return;
+  }
+  const recent = G.sorted.slice(-12);
+  pile.innerHTML = recent.map(i => `<span class="text-lg leading-none drop-shadow-[1px_1px_0_#000]" title="${i.n}">${i.g}</span>`).join('');
+}
+
+function renderDesk() {
+  const has = G.on && !!active;
+  $('#idle').style.display = has ? 'none' : 'flex';
+  const stage = $('#activeStage');
+  stage.style.display = has ? 'flex' : 'none';
+  if (!has) return;
+
+  const held = $('#heldWaste');
+  held.classList.remove('item-drop', 'item-toss');
+  $('#itemGlyph').textContent = active.g;
+  $('#itemName').textContent = active.n;
+  $('#itemNote').textContent = active.note;
+  $('#trapBadge').classList.toggle('hidden', !active.trap);
+
+  const bar = $('#itemBar');
+  bar.style.width = '100%';
+  bar.style.background = '#46b832';
+}
+
+function renderLoot() {
+  $('#lootMeta').textContent = `${G.sorted.length} items · ${G.sorted.reduce((s, i) => s + i.k, 0).toFixed(2)} kg`;
+  const box = $('#loot');
+  if (!G.sorted.length) {
+    box.innerHTML = '<span class="font-silk text-xs text-[#e0be96]">Sorted waste items collect in your RPG bag...</span>';
+    return;
+  }
+  box.innerHTML = G.sorted.map(i =>
+    `<span class="shrink-0 rounded-lg border-2 border-[#2b1d14] bg-[#f7efd8] px-2 py-1 text-base leading-none shadow-[0_2px_0_#2b1d14]" title="${i.n}">${i.g}</span>`
+  ).join('');
+  box.scrollLeft = box.scrollWidth;
+}
+
+function pulseArena(kind) {
+  const box = $('#desk');
+  box.classList.remove('stage-shake');
+  void box.offsetWidth;
+  if (kind === 'miss') box.classList.add('stage-shake');
+}
+
+function showRulebook(it, chosen) {
+  if (!G.on || G.paused) return;
+  G.paused = true;
+  $('#rbItem').textContent = it.n;
+  $('#rbTip').textContent = it.t;
+  $('#rbChosen').textContent = 'You picked ' + BIN_BY_ID[chosen].n;
+  const bin = BIN_BY_ID[it.b];
+  $('#rbBin').textContent = bin.n;
+  $('#rbBin').style.color = bin.c;
+  show($('#rulebook'));
+  const MS = 2200;
+  setTimeout(() => {
+    hide($('#rulebook'));
+    G.ends += MS;
+    G.paused = false;
+    if (!G.on) return;
+    active = null;
+    draw();
+  }, MS);
+}
+
+function sort(binId) {
+  if (!G.on || G.paused || !active || G.animating) return;
+  const it = active;
+  const binInfo = BIN_BY_ID[binId];
+
+  if (binId === it.b) {
+    G.animating = true;
+    sfx.hit(it.trap);
+    state.streak++;
+    const focusZone = state.contract?.biomeFocus || 'All Zones';
+    const zoneBonus = (focusZone === 'All Zones' || BIOMES[activeBiome]?.name === focusZone) ? 1.5 : 1;
+    const pts = Math.round((it.trap ? 30 : 10) * mult() * zoneBonus);
+    state.points += pts;
+    state.kg = Number((state.kg + it.k).toFixed(2));
+    G.score += pts;
+    G.sorted.push(it);
+    save();
+    renderHUD();
+    renderScore();
+    renderLoot();
+    addContractProgress({ binType: it.b });
+    burstParticles(binInfo.c, it.trap ? 28 : 16);
+    spawnFloatingText(`+${pts} $CYCLE`, it.trap ? '#ffe054' : '#6ee755');
+
+    const held = $('#heldWaste');
+    held.classList.add('item-drop');
+    const binBody = $('#centerBinBody');
+    binBody.classList.remove('bin-chomp');
+    void binBody.offsetWidth;
+    binBody.classList.add('bin-chomp');
+
+    renderCenterBin(binInfo.c, binInfo.n.toUpperCase() + ' BIN');
+    $('#lastActionMsg').innerHTML = `<span style="color:${binInfo.c}">+${pts} $CYCLE</span> → ${binInfo.n}`;
+    toast((it.trap ? '★ TRAP BOUNTY! ' : '') + '+' + pts + ' $CYCLE', 'emerald');
+
+    setTimeout(() => {
+      active = null;
+      draw();
+    }, 240);
+  } else {
+    G.animating = true;
+    sfx.miss();
+    state.points = Math.max(0, state.points - 5);
+    state.streak = 0;
+    G.score -= 5;
+    save();
+    renderHUD();
+    renderScore();
+    pulseArena('miss');
+    burstParticles('#e11d48', 14);
+    spawnFloatingText('-5 PTS', '#fb7185');
+    $('#heldWaste').classList.add('item-toss');
+    $('#lastActionMsg').innerHTML = `<span class="text-rose-700">Wrong bin! (-5)</span>`;
+    setTimeout(() => {
+      G.animating = false;
+      showRulebook(it, binId);
+    }, 220);
+  }
+}
+
+function missItem() {
+  sfx.miss();
+  active = null;
+  state.streak = 0;
+  save();
+  renderHUD();
+  toast('Too slow — sent to landfill!', 'rose');
+  pulseArena('miss');
+  draw();
+}
+
+function loop() {
+  if (!G.on || G.paused) return;
+  const now = performance.now();
+  const left = Math.max(0, G.ends - now);
+  updateTimer(left);
+  const elapsed = G.totalMs - left;
+  const lvl = elapsed >= G.totalMs * 0.66 ? 3 : elapsed >= G.totalMs * 0.33 ? 2 : 1;
+  if (lvl !== G.level) {
+    G.level = lvl;
+    renderLevel();
+    toast('Speed Level ' + lvl + '!', 'amber');
+  }
+  if (left <= 0) { endRound(); return; }
+  if (!active || G.animating) return;
+  const remain = G.itemEnds - now;
+  if (remain <= 0) { missItem(); return; }
+  const pct = Math.max(0, Math.min(100, (remain / active.ms) * 100));
+  const bar = $('#itemBar');
+  bar.style.width = pct + '%';
+  bar.style.background = pct < 25 ? '#e11d48' : pct < 55 ? '#f59e0b' : '#46b832';
+}
+
+function startRound(customMs = 60000) {
+  if (G.tick) clearInterval(G.tick);
+  sfx.start();
+  G = { on: true, ends: performance.now() + customMs, totalMs: customMs, itemEnds: 0, level: 1, score: 0, sorted: [], paused: false, tick: null, animating: false };
+  state.streak = 0;
+  save();
+  renderHUD();
+  queue = []; deck = []; active = null;
+  hide($('#rulebook'));
+  hide($('#endPanel'));
+  renderCenterBin('#46b832', 'DUSTBIN');
+  $('#lastActionMsg').textContent = 'Pick a bin below!';
+  draw();
+  renderLevel();
+  renderScore();
+  renderLoot();
+  updateTimer(customMs);
+  MusicEngine.setTrack('blitz', 1);
+  G.tick = setInterval(loop, 80);
+}
+
+function startEncounterCleanup(enemy) {
+  const trapRate = Math.min(0.55, 0.16 + state.wave * 0.05);
+  encounterCleanup = {
+    active: true,
+    enemyType: enemy.type,
+    biome: enemy.biome,
+    roundMs: 35000,
+    trapRate
+  };
+  applyBiomeVisuals(enemy.biome, true);
+  $('#cleanupBannerText').textContent = `EVIDENCE CLEANUP — WAVE ${state.wave} ${enemy.type === 'lieutenant' ? 'LIEUTENANT' : 'GRUNT'} STASH!`;
+  $('#cleanupTrapRate').textContent = `3X TRAP RATE: ${Math.round(trapRate * 100)}%`;
+  show($('#cleanupBanner'), 'flex');
+  switchTab('sort');
+  startRound(35000);
+}
+
+function exitSortToWorldMap() {
+  if (G.on) {
+    G.on = false;
+    G.paused = false;
+    if (G.tick) clearInterval(G.tick);
+    G.tick = null;
+    const kg = Number(G.sorted.reduce((s, i) => s + i.k, 0).toFixed(2));
+    if (kg > 0) addContractProgress({ kg });
+    renderDesk();
+    hide($('#rulebook'));
+  }
+  hide($('#endPanel'));
+  hide($('#cleanupBanner'));
+  encounterCleanup.active = false;
+  switchTab('world');
+  checkContractCompletion();
+  toast('🗺️ Returned to World Map!', 'gold');
+}
+
+function endRound() {
+  G.on = false;
+  G.paused = false;
+  if (G.tick) clearInterval(G.tick);
+  G.tick = null;
+  sfx.end();
+  state.streak = 0;
+  state.best = Math.max(state.best || 0, G.score);
+  const kg = Number(G.sorted.reduce((s, i) => s + i.k, 0).toFixed(2));
+  save();
+  renderHUD();
+  renderScore();
+  renderDesk();
+  hide($('#rulebook'));
+
+  if (kg > 0) {
+    addContractProgress({ kg });
+  }
+
+  $('#endTitle').textContent = encounterCleanup.active ? '🧹 EVIDENCE STASH CLEANED!' : '🏆 SHIFT COMPLETE!';
+  $('#endScore').textContent = G.score;
+  $('#endItems').textContent = G.sorted.length;
+  $('#endKg').textContent = kg.toFixed(2) + ' kg';
+  $('#endBest').textContent = state.best;
+  $('#endPts').textContent = state.points + ' $CYCLE';
+
+  if (encounterCleanup.active) {
+    $('#returnWorldBtn').classList.remove('hidden');
+  } else {
+    $('#returnWorldBtn').classList.add('hidden');
+  }
+
+  show($('#endPanel'));
+  syncToBackend('/score', {
+    name: state.name, squad: state.squad, score: G.score, points: state.points,
+    kg: Number(state.kg.toFixed(2)), best: state.best, at: Date.now()
+  });
+}
+
+function initDrag() {
+  const hand = $('#handActor');
+  hand.addEventListener('dragstart', e => {
+    if (!G.on || !active || G.animating) { e.preventDefault(); return; }
+    e.dataTransfer.setData('text/plain', 'cyclesquad-item');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  hand.addEventListener('dragend', () => $$('.inv-slot').forEach(b => b.classList.remove('over')));
+  const bins = $('#bins');
+  bins.addEventListener('dragover', e => { if (e.target.closest('[data-bin]')) e.preventDefault(); });
+  bins.addEventListener('dragenter', e => { const b = e.target.closest('[data-bin]'); if (b) b.classList.add('over'); });
+  bins.addEventListener('dragleave', e => { const b = e.target.closest('[data-bin]'); if (b) b.classList.remove('over'); });
+  bins.addEventListener('drop', e => {
+    e.preventDefault();
+    const b = e.target.closest('[data-bin]');
+    $$('.inv-slot').forEach(x => x.classList.remove('over'));
+    if (b) sort(b.dataset.bin);
+  });
+}
+
+/* =========================================================
+   ECO-CAM VIDEO RECORDING MINI-GAME (One-Finger Touch & Drag)
+   ========================================================= */
+const EcoCam = (() => {
+  const modal = $('#ecoCamModal');
+  const canvas = $('#ecoCamCanvas');
+  const ctx = canvas.getContext('2d');
+  let running = false;
+  let rafId = null;
+  let targetEnemy = null;
+  let progress = 0;
+  let lockStreak = 0;
+  let recording = false;
+  let startTime = 0;
+  let smokeDim = 0;
+
+  let reticle = { x: 240, y: 140, r: 36 };
+  let enemyObj = { x: 240, y: 140, vx: 2.2, vy: 1.6, dashTimer: 0 };
+  let smokes = [];
+  let projectiles = [];
+  let keys = {};
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(300, Math.floor(rect.width));
+    canvas.height = Math.max(220, Math.floor(rect.height));
+  }
+
+  function start(enemy) {
+    targetEnemy = enemy;
+    running = true;
+    progress = 0;
+    lockStreak = 0;
+    recording = false;
+    smokeDim = 0;
+    smokes = [];
+    projectiles = [];
+    startTime = performance.now();
+
+    $('#camEnemyTitle').textContent = enemy.type === 'lieutenant'
+      ? `ECO-CAM: SLUDGE LIEUTENANT (WAVE ${state.wave})`
+      : `ECO-CAM: SLUDGE GRUNT (WAVE ${state.wave})`;
+    $('#camProgressPct').textContent = '0%';
+    $('#camProgressBar').style.width = '0%';
+    $('#camStreakBadge').textContent = 'LOCK: 0%';
+
+    show(modal);
+    resize();
+
+    reticle.x = canvas.width / 2;
+    reticle.y = canvas.height / 2;
+    const baseSpd = (enemy.type === 'lieutenant' ? 2.8 : 2.0) + Math.min(3.5, state.wave * 0.35);
+    enemyObj = {
+      x: canvas.width * 0.3,
+      y: canvas.height * 0.5,
+      vx: baseSpd,
+      vy: baseSpd * 0.7,
+      baseSpd,
+      dashTimer: 60
+    };
+
+    MusicEngine.setTrack('encounter', 1);
+    cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function stop(completed = false) {
+    running = false;
+    recording = false;
+    $('#camRecBtn').classList.remove('recording');
+    cancelAnimationFrame(rafId);
+    hide(modal);
+
+    if (completed && targetEnemy) {
+      sfx.evidenceDone();
+      const bName = (BIOMES[targetEnemy.biome] || BIOMES.meadow).name;
+      const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      state.evidenceCount += 1;
+      state.evidenceLog.push({
+        id: 'ev_' + Date.now(),
+        enemyType: targetEnemy.type,
+        biome: bName,
+        wave: state.wave,
+        time: nowStr
+      });
+      const focusZone = state.contract?.biomeFocus || 'All Zones';
+      const zoneBonus = (focusZone === 'All Zones' || bName === focusZone) ? 1.5 : 1;
+      const bonusPts = Math.round((targetEnemy.type === 'lieutenant' ? 40 : 20) * zoneBonus);
+      const bonusXp = targetEnemy.type === 'lieutenant' ? 40 : 20;
+      state.points += bonusPts;
+      state.rangerXp += bonusXp;
+      save();
+      renderHUD();
+      addContractProgress({ grunts: 1 });
+      toast(`📹 100% EVIDENCE LOGGED! +${bonusPts} $CYCLE · Clean up their stash!`, 'emerald');
+
+      if (window.Overworld) window.Overworld.defeatEnemy(targetEnemy.id);
+      const defeated = targetEnemy;
+      targetEnemy = null;
+      startEncounterCleanup(defeated);
+    } else {
+      if (window.Overworld) window.Overworld.resumeFromEncounter();
+      MusicEngine.setTrack('overworld', 1);
+    }
+  }
+
+  function tick(now) {
+    if (!running) return;
+    const w = canvas.width, h = canvas.height;
+
+    const rSpd = 6;
+    if (keys['ArrowLeft'] || keys['KeyA']) reticle.x -= rSpd;
+    if (keys['ArrowRight'] || keys['KeyD']) reticle.x += rSpd;
+    if (keys['ArrowUp'] || keys['KeyW']) reticle.y -= rSpd;
+    if (keys['ArrowDown'] || keys['KeyS']) reticle.y += rSpd;
+    reticle.x = Math.max(24, Math.min(w - 24, reticle.x));
+    reticle.y = Math.max(24, Math.min(h - 24, reticle.y));
+
+    enemyObj.dashTimer--;
+    if (enemyObj.dashTimer <= 0) {
+      const ang = Math.random() * Math.PI * 2;
+      const spd = enemyObj.baseSpd * (0.9 + Math.random() * 0.55);
+      enemyObj.vx = Math.cos(ang) * spd;
+      enemyObj.vy = Math.sin(ang) * spd;
+      enemyObj.dashTimer = Math.max(24, 65 - state.wave * 4) + Math.floor(Math.random() * 35);
+
+      smokes.push({
+        x: enemyObj.x,
+        y: enemyObj.y,
+        vx: (Math.random() - 0.5) * 1.4,
+        vy: -0.4 - Math.random() * 0.8,
+        r: 22 + Math.random() * 14,
+        life: 110
+      });
+      const litterGlyphs = ['🥫', '🥤', '🔋', '🍕', '🍌'];
+      projectiles.push({
+        x: enemyObj.x,
+        y: enemyObj.y,
+        vx: (Math.random() - 0.5) * 5,
+        vy: -2.5 - Math.random() * 2.5,
+        g: litterGlyphs[Math.floor(Math.random() * litterGlyphs.length)],
+        life: 70
+      });
+    }
+
+    enemyObj.x += enemyObj.vx;
+    enemyObj.y += enemyObj.vy;
+    if (enemyObj.x < 38 || enemyObj.x > w - 38) enemyObj.vx *= -1;
+    if (enemyObj.y < 42 || enemyObj.y > h - 42) enemyObj.vy *= -1;
+    enemyObj.x = Math.max(38, Math.min(w - 38, enemyObj.x));
+    enemyObj.y = Math.max(42, Math.min(h - 42, enemyObj.y));
+
+    let inSmoke = false;
+    smokes = smokes.filter(s => s.life > 0);
+    for (const s of smokes) {
+      s.x += s.vx;
+      s.y += s.vy;
+      s.r += 0.12;
+      s.life--;
+      if (Math.hypot(reticle.x - s.x, reticle.y - s.y) < s.r + 12) inSmoke = true;
+    }
+    if (inSmoke) smokeDim = Math.min(1, smokeDim + 0.08);
+    else smokeDim = Math.max(0, smokeDim - 0.04);
+
+    projectiles = projectiles.filter(p => p.life > 0);
+    for (const p of projectiles) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.16;
+      p.life--;
+    }
+
+    const dist = Math.hypot(reticle.x - enemyObj.x, reticle.y - enemyObj.y);
+    const locked = dist < reticle.r + 22;
+
+    if (recording && locked) {
+      const rate = (targetEnemy.type === 'lieutenant' ? 0.52 : 0.68) * (inSmoke ? 0.55 : 1);
+      progress = Math.min(100, progress + rate);
+      lockStreak = Math.min(100, lockStreak + 1.5);
+      if (Math.floor(progress) % 7 === 0 && Math.random() < 0.35) sfx.recTick();
+    } else if (!recording) {
+      lockStreak = Math.max(0, lockStreak - 0.8);
+    } else {
+      lockStreak = Math.max(0, lockStreak - 1.2);
+    }
+
+    $('#camProgressPct').textContent = Math.floor(progress) + '%';
+    $('#camProgressBar').style.width = progress + '%';
+    $('#camStreakBadge').textContent = locked && recording ? `LOCKED! ${Math.floor(lockStreak)}%` : `LOCK: ${Math.floor(lockStreak)}%`;
+    $('#camStreakBadge').style.background = locked && recording ? '#6ee755' : '#ffe054';
+
+    const elapsed = Math.floor((now - startTime) / 10);
+    const mins = String(Math.floor(elapsed / 6000)).padStart(2, '0');
+    const secs = String(Math.floor((elapsed % 6000) / 100)).padStart(2, '0');
+    const cs = String(elapsed % 100).padStart(2, '0');
+    $('#camTimecode').textContent = `${mins}:${secs}:${cs}`;
+
+    ctx.imageSmoothingEnabled = false;
+    const b = BIOMES[targetEnemy.biome] || BIOMES.meadow;
+    ctx.fillStyle = b.worldTileB;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.fillStyle = targetEnemy.biome === 'cyber' ? '#241e38' : targetEnemy.biome === 'market' ? '#f59e0b' : '#7dd3fc';
+    ctx.fillRect(0, 0, w, h * 0.35);
+    ctx.fillStyle = b.arenaBg;
+    ctx.fillRect(0, h * 0.35, w, h * 0.65);
+
+    ctx.fillStyle = 'rgba(0,0,0,0.08)';
+    for (let gx = 0; gx < w; gx += 32) ctx.fillRect(gx, h * 0.35, 2, h * 0.65);
+    for (let gy = Math.floor(h * 0.35); gy < h; gy += 32) ctx.fillRect(0, gy, w, 2);
+
+    const ex = Math.round(enemyObj.x), ey = Math.round(enemyObj.y);
+    const isLt = targetEnemy.type === 'lieutenant';
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillRect(ex - 18, ey + 20, 36, 8);
+    ctx.fillStyle = '#2b1d14';
+    ctx.fillRect(ex - 16, ey - 22, 32, 42);
+    ctx.fillStyle = isLt ? '#4c1d95' : '#581c87';
+    ctx.fillRect(ex - 13, ey - 19, 26, 36);
+    ctx.fillStyle = isLt ? '#facc15' : '#84cc16';
+    ctx.fillRect(ex - 10, ey - 2, 20, 8);
+    ctx.fillStyle = '#d9f99d';
+    ctx.fillRect(ex - 10, ey - 16, 20, 10);
+    ctx.fillStyle = isLt ? '#f59e0b' : '#18181b';
+    ctx.fillRect(ex - 8, ey - 13, 16, 5);
+    if (isLt) {
+      ctx.fillStyle = '#ffe054';
+      ctx.fillRect(ex - 10, ey - 24, 20, 5);
+    }
+
+    ctx.font = '20px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (const p of projectiles) {
+      ctx.fillText(p.g, p.x, p.y);
+    }
+
+    for (const s of smokes) {
+      ctx.fillStyle = `rgba(110, 128, 100, ${Math.min(0.75, s.life / 100)})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (smokeDim > 0.02) {
+      ctx.fillStyle = `rgba(80, 95, 72, ${smokeDim * 0.45})`;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.65)';
+    ctx.lineWidth = 3;
+    const pad = 14, br = 22;
+    [[pad, pad, 1, 1], [w - pad, pad, -1, 1], [pad, h - pad, 1, -1], [w - pad, h - pad, -1, -1]].forEach(([bx, by, dx, dy]) => {
+      ctx.beginPath();
+      ctx.moveTo(bx + dx * br, by);
+      ctx.lineTo(bx, by);
+      ctx.lineTo(bx, by + dy * br);
+      ctx.stroke();
+    });
+
+    ctx.strokeStyle = (recording && locked) ? '#6ee755' : (recording ? '#fb7185' : '#ffe054');
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(reticle.x, reticle.y, reticle.r, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(reticle.x - reticle.r - 8, reticle.y);
+    ctx.lineTo(reticle.x - reticle.r + 8, reticle.y);
+    ctx.moveTo(reticle.x + reticle.r - 8, reticle.y);
+    ctx.lineTo(reticle.x + reticle.r + 8, reticle.y);
+    ctx.moveTo(reticle.x, reticle.y - reticle.r - 8);
+    ctx.lineTo(reticle.x, reticle.y - reticle.r + 8);
+    ctx.moveTo(reticle.x, reticle.y + reticle.r - 8);
+    ctx.lineTo(reticle.x, reticle.y + reticle.r + 8);
+    ctx.stroke();
+
+    if (progress >= 100) {
+      stop(true);
+      return;
+    }
+
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function setPointer(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    reticle.x = Math.max(20, Math.min(canvas.width - 20, clientX - rect.left));
+    reticle.y = Math.max(20, Math.min(canvas.height - 20, clientY - rect.top));
+  }
+  canvas.addEventListener('pointermove', e => {
+    if (!running) return;
+    setPointer(e.clientX, e.clientY);
+    if (e.buttons > 0 || e.pointerType === 'touch') {
+      recording = true;
+      $('#camRecBtn').classList.add('recording');
+    }
+  });
+  canvas.addEventListener('pointerdown', e => {
+    if (!running) return;
+    e.preventDefault();
+    setPointer(e.clientX, e.clientY);
+    recording = true;
+    $('#camRecBtn').classList.add('recording');
+  });
+  window.addEventListener('pointerup', () => {
+    if (!running) return;
+    recording = false;
+    $('#camRecBtn').classList.remove('recording');
+  });
+
+  const recBtn = $('#camRecBtn');
+  recBtn.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    recording = true;
+    recBtn.classList.add('recording');
+  });
+  recBtn.addEventListener('pointerup', () => { recording = false; recBtn.classList.remove('recording'); });
+  recBtn.addEventListener('pointerleave', () => { recording = false; recBtn.classList.remove('recording'); });
+
+  $('#camFleeBtn').addEventListener('click', () => stop(false));
+
+  window.addEventListener('keydown', e => {
+    if (!running) return;
+    keys[e.code] = true;
+    if (e.code === 'Space') {
+      e.preventDefault();
+      recording = true;
+      recBtn.classList.add('recording');
+    }
+  });
+  window.addEventListener('keyup', e => {
+    keys[e.code] = false;
+    if (e.code === 'Space') {
+      recording = false;
+      recBtn.classList.remove('recording');
+    }
+  });
+  window.addEventListener('resize', () => { if (running) resize(); });
+
+  return { start, stop, get active() { return running; } };
+})();
+
+/* =========================================================
+   ENDLESS POKEMON FIRERED-STYLE 2D PIXEL OVERWORLD ENGINE
+   ========================================================= */
+window.Overworld = (() => {
+  const canvas = $('#overworldCanvas');
+  const ctx = canvas.getContext('2d');
+  const TILE = 32;
+  const COLS = 48;
+  const ROWS = 36;
+  const WORLD_W = COLS * TILE;
+  const WORLD_H = ROWS * TILE;
+
+  const map = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+  const SOLID = new Set([2, 3, 7, 8]);
+
+  function getBiomeAtTile(tx, ty) {
+    if (tx < 24 && ty < 18) return 'meadow';
+    if (tx >= 24 && ty < 18) return 'harbor';
+    if (tx < 24 && ty >= 18) return 'market';
+    return 'cyber';
+  }
+
+  function buildWorldMap() {
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        const b = getBiomeAtTile(x, y);
+        if (b === 'meadow') map[y][x] = (x + y) % 7 === 0 ? 9 : 0;
+        else if (b === 'harbor') map[y][x] = (x > 43 || y < 3 || (x > 36 && y < 7)) ? 3 : 4;
+        else if (b === 'market') map[y][x] = 5;
+        else map[y][x] = 6;
+
+        if (x === 0 || y === 0 || x === COLS - 1 || y === ROWS - 1) {
+          map[y][x] = b === 'harbor' ? 3 : 2;
+        }
+      }
+    }
+
+    // Interconnecting Grand Roads
+    for (let x = 3; x < COLS - 3; x++) {
+      map[16][x] = 1; map[17][x] = 1; map[18][x] = 1;
+    }
+    for (let y = 3; y < ROWS - 3; y++) {
+      map[y][22] = 1; map[y][23] = 1; map[y][24] = 1;
+    }
+
+    // Branch roads to Biome Plazas
+    for (let y = 8; y <= 16; y++) { map[y][11] = 1; map[y][12] = 1; map[y][34] = 1; map[y][35] = 1; }
+    for (let y = 18; y <= 28; y++) { map[y][11] = 1; map[y][12] = 1; map[y][34] = 1; map[y][35] = 1; }
+    for (let x = 6; x <= 17; x++) { map[11][x] = 1; map[25][x] = 1; }
+    for (let x = 30; x <= 41; x++) { map[11][x] = 1; map[25][x] = 1; }
+
+    // NW: Meadow Trees & Ranger HQ
+    [[4, 4], [5, 4], [6, 4], [4, 5], [17, 5], [18, 5], [18, 6], [4, 13], [5, 13]].forEach(([x, y]) => map[y][x] = 2);
+    for (let y = 5; y <= 7; y++) for (let x = 9; x <= 13; x++) map[y][x] = 7;
+
+    // NE: Harbor Shipping Crates & Dock Water Pools
+    [[28, 5], [29, 5], [28, 6], [38, 9], [39, 9], [31, 14], [32, 14]].forEach(([x, y]) => map[y][x] = 8);
+    [[27, 2], [28, 2], [29, 2], [44, 10], [44, 11], [45, 10], [45, 11]].forEach(([x, y]) => map[y][x] = 3);
+
+    // SW: Sunset Bazaar Market Stalls
+    [[6, 21], [7, 21], [8, 21], [15, 21], [16, 21], [17, 21], [6, 28], [7, 28], [16, 29], [17, 29]].forEach(([x, y]) => map[y][x] = 8);
+
+    // SE: Cyber Ruins Pillars & Terminals
+    [[28, 21], [29, 21], [39, 21], [40, 21], [29, 29], [30, 29], [38, 30], [39, 30]].forEach(([x, y]) => map[y][x] = 8);
+  }
+  buildWorldMap();
+
+  function isWalkable(px, py) {
+    const pad = 9;
+    const pts = [
+      [px - pad, py - 4],
+      [px + pad, py - 4],
+      [px - pad, py + 11],
+      [px + pad, py + 11]
+    ];
+    for (const [cx, cy] of pts) {
+      const tx = Math.floor(cx / TILE);
+      const ty = Math.floor(cy / TILE);
+      if (tx < 1 || ty < 1 || tx >= COLS - 1 || ty >= ROWS - 1) return false;
+      if (SOLID.has(map[ty][tx])) return false;
+    }
+    return true;
+  }
+
+  const NPCS = [
+    {
+      id: 'oakleaf', name: 'PROF. OAKLEAF', x: 11 * TILE + 16, y: 9 * TILE + 16, color: '#238219', hat: '#f7efd8',
+      lines: [
+        'Welcome back, Ranger! Team Sludge is dropping typed waste across all 4 zones!',
+        'Pick up glowing trash to carry it, then tap the matching bin in the Quick-Sort bar or walk up to a color-coded bin!'
+      ]
+    },
+    {
+      id: 'marina', name: 'CAPT. MARINA', x: 34 * TILE + 16, y: 9 * TILE + 16, color: '#0284c7', hat: '#ffe054',
+      lines: [
+        'Ahoy! Neon Harbor stays clean thanks to CycleSquad.',
+        'Watch out for Gold-Visor Sludge Lieutenants in Wave 2+ — or hit FLEE in Eco-Cam to activate a 3.5s stealth shield!'
+      ]
+    },
+    {
+      id: 'tariq', name: 'MERCHANT TARIQ', x: 11 * TILE + 16, y: 23 * TILE + 16, color: '#d97706', hat: '#fb7185',
+      lines: [
+        'Greetings from Sunset Bazaar! Check your Wave Contract for the active Waste-Type objective & 1.5x Focus Zone!',
+        'Visit the Free-Cycle Bazaar tab to adopt the Golden Sprout Companion or upgrade your Ranger Leaf Cap.'
+      ]
+    },
+    {
+      id: 'nova', name: 'TECH SAGE NOVA', x: 34 * TILE + 16, y: 23 * TILE + 16, color: '#9333ea', hat: '#38bdf8',
+      lines: [
+        'Scanning Cyber Ruins... E-Waste and Hazardous batteries are critical to segregate properly.',
+        'Complete your Wave Contract to level up your Ranger Rank and spawn endless harder waves!'
+      ]
+    }
+  ];
+
+  const QUEST_BOARDS = [
+    { id: 'qb_meadow', name: 'MEADOW QUEST BOARD', x: 14 * TILE + 16, y: 10 * TILE + 16 },
+    { id: 'qb_market', name: 'BAZAAR QUEST BOARD', x: 15 * TILE + 16, y: 24 * TILE + 16 }
+  ];
+
+  const PORTALS = [
+    { id: 'p_meadow', biome: 'meadow', name: 'Emerald Meadow', x: 7 * TILE + 16, y: 13 * TILE + 16 },
+    { id: 'p_harbor', biome: 'harbor', name: 'Neon Harbor', x: 40 * TILE + 16, y: 13 * TILE + 16 },
+    { id: 'p_market', biome: 'market', name: 'Sunset Bazaar', x: 7 * TILE + 16, y: 29 * TILE + 16 },
+    { id: 'p_cyber',  biome: 'cyber',  name: 'Cyber Ruins', x: 40 * TILE + 16, y: 29 * TILE + 16 }
+  ];
+
+  // 5 Color-Coded Pixel Waste Bins on the Overworld Crossroads Plaza + Biome Hubs
+  const WORLD_BINS = [
+    { id: 'wet',        n: 'Wet',        c: '#38b828', x: 19 * TILE + 16, y: 15 * TILE + 16 },
+    { id: 'dry',        n: 'Dry',        c: '#e89e15', x: 21 * TILE + 16, y: 15 * TILE + 16 },
+    { id: 'recyclable', n: 'Recyclable', c: '#2493eb', x: 25 * TILE + 16, y: 15 * TILE + 16 },
+    { id: 'ewaste',     n: 'E-Waste',    c: '#9333ea', x: 27 * TILE + 16, y: 15 * TILE + 16 },
+    { id: 'hazardous',  n: 'Hazardous',  c: '#e11d48', x: 23 * TILE + 16, y: 19 * TILE + 16 },
+    // Secondary Biome Plaza Bins
+    { id: 'wet',        n: 'Wet',        c: '#38b828', x: 9 * TILE + 16,  y: 10 * TILE + 16 },
+    { id: 'recyclable', n: 'Recyclable', c: '#2493eb', x: 37 * TILE + 16, y: 10 * TILE + 16 },
+    { id: 'dry',        n: 'Dry',        c: '#e89e15', x: 9 * TILE + 16,  y: 24 * TILE + 16 },
+    { id: 'ewaste',     n: 'E-Waste',    c: '#9333ea', x: 37 * TILE + 16, y: 24 * TILE + 16 }
+  ];
+
+  const player = {
+    x: state.playerX,
+    y: state.playerY,
+    dir: 'down',
+    frame: 0,
+    stepTimer: 0,
+    moving: false,
+    fleeShieldUntil: 0,
+    carriedItem: null,
+    targetX: null,
+    targetY: null
+  };
+  const pet = { x: player.x - 18, y: player.y + 10 };
+  if (!isWalkable(player.x, player.y)) {
+    player.x = 11 * TILE + 16;
+    player.y = 11 * TILE + 16;
+    pet.x = player.x - 18;
+    pet.y = player.y + 10;
+  }
+
+  let enemies = [];
+  let litterDrops = [];
+  let worldFloats = [];
+  let dustParticles = [];
+  let pausedForEncounter = false;
+  let dialogueOpen = false;
+  let portalCooldown = 0;
+
+  const keys = {};
+  const touchDir = { up: false, down: false, left: false, right: false, sprint: false };
+
+  function spawnLitterDrop(x, y) {
+    const template = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+    litterDrops.push({
+      id: 'lit_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      x,
+      y,
+      item: Object.assign({}, template),
+      biome: getBiomeAtTile(Math.floor(x / TILE), Math.floor(y / TILE))
+    });
+  }
+
+  function spawnOneEnemy() {
+    for (let tries = 0; tries < 50; tries++) {
+      const tx = 3 + Math.floor(Math.random() * (COLS - 6));
+      const ty = 3 + Math.floor(Math.random() * (ROWS - 6));
+      const px = tx * TILE + 16;
+      const py = ty * TILE + 16;
+      if (!isWalkable(px, py)) continue;
+      if (Math.hypot(px - player.x, py - player.y) < 170) continue;
+
+      const isLt = state.wave >= 2 && Math.random() < Math.min(0.45, 0.2 + state.wave * 0.04);
+      const dirs = ['up', 'down', 'left', 'right'];
+      enemies.push({
+        id: 'en_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        type: isLt ? 'lieutenant' : 'grunt',
+        x: px,
+        y: py,
+        dir: dirs[Math.floor(Math.random() * 4)],
+        speed: (isLt ? 1.55 : 1.05) + Math.min(1.1, state.wave * 0.08),
+        patrolTimer: 60 + Math.floor(Math.random() * 80),
+        litterTimer: 160 + Math.floor(Math.random() * 200),
+        biome: getBiomeAtTile(tx, ty),
+        frame: 0
+      });
+      return;
+    }
+  }
+
+  function syncWaveEnemies() {
+    const desired = Math.min(10, 4 + state.wave);
+    while (enemies.length < desired) spawnOneEnemy();
+  }
+  syncWaveEnemies();
+
+  // Seed initial real-item trash drops across the overworld
+  for (let i = 0; i < 12; i++) {
+    const tx = 4 + Math.floor(Math.random() * (COLS - 8));
+    const ty = 4 + Math.floor(Math.random() * (ROWS - 8));
+    const px = tx * TILE + 16, py = ty * TILE + 16;
+    if (isWalkable(px, py)) spawnLitterDrop(px, py);
+  }
+
+  /* 1-Tap Quick-Sort 5-Bin Bar Logic */
+  function updateCarryUI() {
+    const bar = $('#owCarryBar');
+    if (!player.carriedItem) {
+      hide(bar);
+      return;
+    }
+    const it = player.carriedItem;
+    $('#owCarryIcon').textContent = it.g;
+    $('#owCarryName').textContent = `Carrying: ${it.n} (${it.k.toFixed(2)}kg)`;
+    show(bar, 'block');
+  }
+
+  function sortCarriedItem(binId) {
+    if (!player.carriedItem) return;
+    const it = player.carriedItem;
+    const binInfo = BIN_BY_ID[binId];
+    if (binId === it.b) {
+      const bName = BIOMES[activeBiome]?.name;
+      const focusZone = state.contract?.biomeFocus || 'All Zones';
+      const focusMult = (focusZone === 'All Zones' || bName === focusZone) ? 1.5 : 1;
+      const pts = Math.round((it.trap ? 35 : 15) * focusMult);
+      state.points += pts;
+      state.kg = Number((state.kg + it.k).toFixed(2));
+      state.rangerXp += 12;
+      player.carriedItem = null;
+      updateCarryUI();
+      save();
+      renderHUD();
+      addContractProgress({ kg: it.k, binType: it.b });
+      sfx.hit(it.trap);
+      worldFloats.push({ x: player.x, y: player.y - 20, text: `+${pts} $CYCLE!`, life: 55 });
+      toast(`✅ Sorted ${it.n} into ${binInfo.n}! (+${pts} $CYCLE)`, 'emerald');
+
+      // Spawn a replacement piece of trash elsewhere
+      for (let t = 0; t < 25; t++) {
+        const rx = (4 + Math.floor(Math.random() * (COLS - 8))) * TILE + 16;
+        const ry = (4 + Math.floor(Math.random() * (ROWS - 8))) * TILE + 16;
+        if (isWalkable(rx, ry)) { spawnLitterDrop(rx, ry); break; }
+      }
+    } else {
+      sfx.miss();
+      openDialogue(
+        'FIELD GUIDE TIP',
+        `${it.g} ${it.n} does not belong in ${binInfo.n}! ${it.t}`,
+        [{ label: 'GOT IT', cls: 'rpg-btn-gold', onClick: closeDialogue }]
+      );
+    }
+  }
+
+  $('#owQuickBins').innerHTML = BINS.map(b => `
+    <button type="button" data-owbin="${b.id}" class="rounded-lg border-2 border-[#2b1d14] px-1 py-2 text-center font-silk text-[10px] sm:text-xs font-bold text-white shadow-[0_2px_0_#2b1d14] active:translate-y-0.5 cursor-pointer" style="background:${b.c}">
+      ${b.n}
+    </button>
+  `).join('');
+  $('#owQuickBins').addEventListener('click', e => {
+    const btn = e.target.closest('[data-owbin]');
+    if (btn) sortCarriedItem(btn.dataset.owbin);
+  });
+  $('#owDropTrashBtn').addEventListener('click', () => {
+    if (!player.carriedItem) return;
+    spawnLitterDrop(player.x, player.y + 8);
+    player.carriedItem = null;
+    updateCarryUI();
+    toast('Dropped item on ground.', 'gold');
+  });
+
+  /* FireRed Typewriter Dialogue System */
+  let typeTimer = null;
+  let currentDlgLines = [];
+  let currentDlgIdx = 0;
+
+  function openDialogue(speaker, lines, actions = []) {
+    dialogueOpen = true;
+    currentDlgLines = Array.isArray(lines) ? lines : [lines];
+    currentDlgIdx = 0;
+    $('#dlgSpeaker').textContent = speaker;
+    show($('#owDialogue'), 'block');
+    renderDialogueLine(actions);
+  }
+
+  function renderDialogueLine(actions = []) {
+    clearInterval(typeTimer);
+    const full = currentDlgLines[currentDlgIdx] || '';
+    const textEl = $('#dlgText');
+    const actEl = $('#dlgActions');
+    textEl.textContent = '';
+    actEl.innerHTML = '';
+
+    let i = 0;
+    typeTimer = setInterval(() => {
+      i++;
+      textEl.textContent = full.slice(0, i);
+      if (i % 3 === 0) sfx.blip();
+      if (i >= full.length) {
+        clearInterval(typeTimer);
+        const hasMore = currentDlgIdx < currentDlgLines.length - 1;
+        if (hasMore) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'rpg-btn-green rounded-lg px-3 py-1.5 font-pixel text-[8px]';
+          btn.innerHTML = 'NEXT <span class="blink-caret">▼</span>';
+          btn.onclick = () => { currentDlgIdx++; renderDialogueLine(actions); };
+          actEl.appendChild(btn);
+        } else if (actions.length) {
+          actions.forEach(a => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = (a.cls || 'rpg-btn-gold') + ' rounded-lg px-3 py-1.5 font-pixel text-[8px]';
+            btn.textContent = a.label;
+            btn.onclick = () => a.onClick();
+            actEl.appendChild(btn);
+          });
+        } else {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'rpg-btn-gold rounded-lg px-3 py-1.5 font-pixel text-[8px]';
+          btn.innerHTML = 'CLOSE <span class="blink-caret">▼</span>';
+          btn.onclick = closeDialogue;
+          actEl.appendChild(btn);
+        }
+      }
+    }, 18);
+  }
+
+  function closeDialogue() {
+    clearInterval(typeTimer);
+    dialogueOpen = false;
+    hide($('#owDialogue'));
+  }
+
+  function openPortalMenu(currentPortal) {
+    const actions = PORTALS.map(p => ({
+      label: (p.biome === currentPortal.biome ? '★ ' : '🌀 ') + p.name,
+      cls: p.biome === currentPortal.biome ? 'rpg-btn-gold' : 'rpg-btn-blue',
+      onClick: () => {
+        sfx.portal();
+        player.x = p.x;
+        player.y = p.y + 34;
+        player.targetX = null;
+        player.targetY = null;
+        portalCooldown = 90;
+        state.playerX = player.x;
+        state.playerY = player.y;
+        save();
+        applyBiomeVisuals(p.biome, true);
+        closeDialogue();
+        toast(`🌀 Fast-traveled to ${p.name}!`, 'emerald');
+      }
+    }));
+    actions.push({ label: 'CANCEL', cls: 'rpg-btn-gold', onClick: closeDialogue });
+    openDialogue('FAST-TRAVEL PORTAL', 'Select an Open-World Biome destination to warp instantly:', actions);
+  }
+
+  function triggerEncounter(enemy) {
+    if (pausedForEncounter || EcoCam.active) return;
+    if (performance.now() < player.fleeShieldUntil) return;
+    pausedForEncounter = true;
+    player.targetX = null;
+    player.targetY = null;
+    closeDialogue();
+    state.playerX = player.x;
+    state.playerY = player.y;
+    save();
+
+    sfx.encounter();
+    const flash = $('#battleFlash');
+    $('#battleFlashText').textContent = enemy.type === 'lieutenant'
+      ? 'SLUDGE LIEUTENANT spotted!'
+      : 'A wild SLUDGE GRUNT appeared!';
+    show(flash, 'flex');
+    flash.classList.remove('battle-flash-active');
+    void flash.offsetWidth;
+    flash.classList.add('battle-flash-active');
+
+    setTimeout(() => {
+      hide(flash);
+      EcoCam.start(enemy);
+    }, 1150);
+  }
+
+  function defeatEnemy(id) {
+    enemies = enemies.filter(e => e.id !== id);
+    pausedForEncounter = false;
+    setTimeout(() => {
+      syncWaveEnemies();
+    }, 5500);
+  }
+
+  function resumeFromEncounter() {
+    pausedForEncounter = false;
+    // Grant a 3.5-second flashing stealth shield so enemies & vision cones cannot re-aggro
+    player.fleeShieldUntil = performance.now() + 3500;
+    player.targetX = null;
+    player.targetY = null;
+
+    // Safely push nearby enemies away onto valid walkable tiles (never setting en.x = player.x)
+    for (const en of enemies) {
+      const dist = Math.hypot(en.x - player.x, en.y - player.y);
+      if (dist < 145) {
+        const baseAng = dist > 1 ? Math.atan2(en.y - player.y, en.x - player.x) : Math.random() * Math.PI * 2;
+        let relocated = false;
+        for (let aOff = 0; aOff < Math.PI * 2; aOff += Math.PI / 4) {
+          const ang = baseAng + aOff;
+          for (let step = 128; step >= 64; step -= 16) {
+            const nx = player.x + Math.cos(ang) * step;
+            const ny = player.y + Math.sin(ang) * step;
+            if (isWalkable(nx, ny)) {
+              en.x = nx;
+              en.y = ny;
+              relocated = true;
+              break;
+            }
+          }
+          if (relocated) break;
+        }
+        const opp = { up: 'down', down: 'up', left: 'right', right: 'left' };
+        en.dir = opp[en.dir] || 'down';
+        en.patrolTimer = 90;
+      }
+    }
+    toast('🛡️ Escaped! 3.5s Stealth Shield active!', 'gold');
+  }
+
+  function interact() {
+    if (currentTab !== 'world' || pausedForEncounter || EcoCam.active) return;
+    if (dialogueOpen) {
+      const firstBtn = $('#dlgActions button');
+      if (firstBtn) firstBtn.click();
+      return;
+    }
+
+    // 1. If carrying trash, check nearby Overworld Waste Bin first
+    if (player.carriedItem) {
+      for (const wb of WORLD_BINS) {
+        if (Math.hypot(wb.x - player.x, wb.y - player.y) < 48) {
+          sortCarriedItem(wb.id);
+          return;
+        }
+      }
+    }
+
+    // 2. Pick up nearby ground trash if hands are free
+    if (!player.carriedItem) {
+      const pickupRange = state.owned.includes('m3') ? 70 : 44;
+      for (let i = 0; i < litterDrops.length; i++) {
+        const l = litterDrops[i];
+        if (Math.hypot(l.x - player.x, l.y - player.y) < pickupRange) {
+          litterDrops.splice(i, 1);
+          player.carriedItem = l.item;
+          updateCarryUI();
+          sfx.pickup();
+          toast(`Picked up ${l.item.g} ${l.item.n}! Sort it into the right bin!`, 'gold');
+          return;
+        }
+      }
+    }
+
+    // 3. Check nearby Enemy (only if not shielded)
+    if (performance.now() >= player.fleeShieldUntil) {
+      for (const en of enemies) {
+        if (Math.hypot(en.x - player.x, en.y - player.y) < 52) {
+          triggerEncounter(en);
+          return;
+        }
+      }
+    }
+    // 4. Check NPCs
+    for (const npc of NPCS) {
+      if (Math.hypot(npc.x - player.x, npc.y - player.y) < 52) {
+        openDialogue(npc.name, npc.lines);
+        return;
+      }
+    }
+    // 5. Check Quest Boards
+    for (const qb of QUEST_BOARDS) {
+      if (Math.hypot(qb.x - player.x, qb.y - player.y) < 54) {
+        const c = state.contract;
+        const binMeta = BIN_BY_ID[c.wasteType || 'wet'] || BIN_BY_ID.wet;
+        openDialogue(
+          qb.name,
+          `WAVE ${state.wave} CONTRACT: Record ${c.gruntsDone}/${c.gruntsTarget} Grunts, Sort ${c.typeDone || 0}/${c.typeTarget || 2} ${binMeta.n}, & Divert ${c.kgDone.toFixed(1)}/${c.kgTarget.toFixed(1)}kg. Bounty: +${c.reward} $CYCLE.`,
+          [
+            { label: '🔄 REROLL NEW CONTRACT', cls: 'rpg-btn-green', onClick: () => { rerollContract(); closeDialogue(); } },
+            { label: 'CLOSE', cls: 'rpg-btn-gold', onClick: closeDialogue }
+          ]
+        );
+        return;
+      }
+    }
+    // 6. Check Portals
+    for (const p of PORTALS) {
+      if (Math.hypot(p.x - player.x, p.y - player.y) < 48) {
+        openPortalMenu(p);
+        return;
+      }
+    }
+  }
+
+  function resize() {
+    const vp = $('#owViewport');
+    if (!vp) return;
+    const rect = vp.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      canvas.width = Math.floor(rect.width);
+      canvas.height = Math.floor(rect.height);
+    }
+  }
+  window.addEventListener('resize', resize);
+
+  /* Update Simulation */
+  let savePosTick = 0;
+  function update(now) {
+    if (currentTab !== 'world' || pausedForEncounter || EcoCam.active) return;
+    if (portalCooldown > 0) portalCooldown--;
+
+    // Player Movement (Keyboard, D-Pad, or Tap-to-Walk)
+    if (!dialogueOpen) {
+      let dx = 0, dy = 0;
+      if (keys['KeyW'] || keys['ArrowUp'] || touchDir.up) dy -= 1;
+      if (keys['KeyS'] || keys['ArrowDown'] || touchDir.down) dy += 1;
+      if (keys['KeyA'] || keys['ArrowLeft'] || touchDir.left) dx -= 1;
+      if (keys['KeyD'] || keys['ArrowRight'] || touchDir.right) dx += 1;
+
+      if (dx !== 0 || dy !== 0) {
+        player.targetX = null;
+        player.targetY = null;
+      } else if (player.targetX !== null && player.targetY !== null) {
+        const tx = player.targetX - player.x;
+        const ty = player.targetY - player.y;
+        const dist = Math.hypot(tx, ty);
+        if (dist > 6) {
+          dx = tx / dist;
+          dy = ty / dist;
+        } else {
+          player.targetX = null;
+          player.targetY = null;
+        }
+      }
+
+      const sprinting = !!(keys['ShiftLeft'] || keys['ShiftRight'] || touchDir.sprint);
+      const capBonus = state.owned.includes('m1') ? 1.15 : 1;
+      const spd = (sprinting ? 3.9 : 2.5) * capBonus;
+      player.moving = dx !== 0 || dy !== 0;
+
+      if (player.moving) {
+        const len = Math.hypot(dx, dy);
+        if (len > 1) { dx /= len; dy /= len; }
+        if (Math.abs(dx) > Math.abs(dy)) player.dir = dx < 0 ? 'left' : 'right';
+        else player.dir = dy < 0 ? 'up' : 'down';
+
+        const nx = player.x + dx * spd;
+        const ny = player.y + dy * spd;
+        let moved = false;
+        if (isWalkable(nx, player.y)) { player.x = nx; moved = true; }
+        if (isWalkable(player.x, ny)) { player.y = ny; moved = true; }
+        if (!moved) { player.targetX = null; player.targetY = null; }
+
+        // Smoothly follow Golden Sprout Pet if owned
+        const pDist = Math.hypot(player.x - pet.x, player.y - pet.y);
+        if (pDist > 24) {
+          pet.x += ((player.x - pet.x) / pDist) * (spd * 0.92);
+          pet.y += ((player.y - pet.y) / pDist) * (spd * 0.92);
+        }
+
+        player.stepTimer++;
+        if (player.stepTimer % (sprinting ? 8 : 12) === 0) {
+          player.frame = (player.frame + 1) % 4;
+          sfx.step();
+          if (sprinting) {
+            dustParticles.push({ x: player.x, y: player.y + 12, life: 16 });
+          }
+        }
+
+        const bKey = getBiomeAtTile(Math.floor(player.x / TILE), Math.floor(player.y / TILE));
+        if (bKey !== activeBiome) {
+          applyBiomeVisuals(bKey, true);
+        }
+        $('#owZonePill').textContent = '📍 ' + BIOMES[bKey].name;
+
+        savePosTick++;
+        if (savePosTick % 30 === 0) {
+          state.playerX = Math.round(player.x);
+          state.playerY = Math.round(player.y);
+          save();
+        }
+      } else {
+        player.frame = 0;
+      }
+
+      // Check stepping on Fast-Travel Portal
+      if (portalCooldown === 0) {
+        for (const p of PORTALS) {
+          if (Math.hypot(p.x - player.x, p.y - player.y) < 18) {
+            portalCooldown = 100;
+            player.targetX = null;
+            player.targetY = null;
+            openPortalMenu(p);
+            break;
+          }
+        }
+      }
+
+      // Pick up ground trash when walking close (Ocean Net increases radius +60%)
+      const pickupRadius = state.owned.includes('m3') ? 36 : 22;
+      if (!player.carriedItem) {
+        for (let i = litterDrops.length - 1; i >= 0; i--) {
+          const l = litterDrops[i];
+          if (Math.hypot(l.x - player.x, l.y - player.y) < pickupRadius) {
+            litterDrops.splice(i, 1);
+            player.carriedItem = l.item;
+            updateCarryUI();
+            sfx.pickup();
+            worldFloats.push({ x: l.x, y: l.y - 8, text: `${l.item.g} PICKED!`, life: 45 });
+            break;
+          }
+        }
+      } else {
+        // Auto-deposit if walking directly next to the matching Overworld Waste Bin
+        for (const wb of WORLD_BINS) {
+          if (Math.hypot(wb.x - player.x, wb.y - player.y) < 28 && wb.id === player.carriedItem.b) {
+            sortCarriedItem(wb.id);
+            break;
+          }
+        }
+      }
+    }
+
+    // Update Patrolling Enemies
+    const dirs = ['up', 'down', 'left', 'right'];
+    const dirVec = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+
+    for (const en of enemies) {
+      en.patrolTimer--;
+      if (en.patrolTimer <= 0) {
+        en.dir = dirs[Math.floor(Math.random() * 4)];
+        en.patrolTimer = 65 + Math.floor(Math.random() * 90);
+      }
+
+      const [vx, vy] = dirVec[en.dir];
+      const nx = en.x + vx * en.speed;
+      const ny = en.y + vy * en.speed;
+      if (isWalkable(nx, ny)) {
+        en.x = nx;
+        en.y = ny;
+        en.frame = (en.frame + 0.12) % 4;
+      } else {
+        en.dir = dirs[Math.floor(Math.random() * 4)];
+      }
+      en.biome = getBiomeAtTile(Math.floor(en.x / TILE), Math.floor(en.y / TILE));
+
+      // Drop real typed litter periodically
+      en.litterTimer--;
+      if (en.litterTimer <= 0 && litterDrops.length < 18) {
+        en.litterTimer = 220 + Math.floor(Math.random() * 200);
+        spawnLitterDrop(en.x, en.y);
+      }
+
+      // Check collision OR Line-of-Sight Vision Cone detection (blocked during 3.5s flee shield)
+      if (!dialogueOpen && now >= player.fleeShieldUntil) {
+        const dist = Math.hypot(player.x - en.x, player.y - en.y);
+        if (dist < 26) {
+          triggerEncounter(en);
+          return;
+        }
+        const sightRange = en.type === 'lieutenant' ? 115 : 88;
+        if (dist < sightRange) {
+          const toPlayerX = (player.x - en.x) / dist;
+          const toPlayerY = (player.y - en.y) / dist;
+          const dot = toPlayerX * vx + toPlayerY * vy;
+          if (dot > 0.84) {
+            triggerEncounter(en);
+            return;
+          }
+        }
+      }
+    }
+
+    dustParticles = dustParticles.filter(d => d.life > 0);
+    dustParticles.forEach(d => d.life--);
+    worldFloats = worldFloats.filter(f => f.life > 0);
+    worldFloats.forEach(f => { f.y -= 0.7; f.life--; });
+  }
+
+  /* Crisp 16-Bit Pixel Rendering */
+  function drawTile(t, x, y, tx, ty, animTick) {
+    switch (t) {
+      case 0:
+        ctx.fillStyle = (tx + ty) % 2 === 0 ? '#74c64b' : '#69ba41';
+        ctx.fillRect(x, y, TILE, TILE);
+        break;
+      case 9:
+        ctx.fillStyle = '#74c64b';
+        ctx.fillRect(x, y, TILE, TILE);
+        ctx.fillStyle = (animTick % 2 === 0) ? '#ffe054' : '#ff8598';
+        ctx.fillRect(x + 8, y + 10, 5, 5);
+        ctx.fillStyle = '#fffaf0';
+        ctx.fillRect(x + 18, y + 20, 4, 4);
+        break;
+      case 1:
+        ctx.fillStyle = (tx + ty) % 2 === 0 ? '#e3cba0' : '#d9bf91';
+        ctx.fillRect(x, y, TILE, TILE);
+        ctx.fillStyle = 'rgba(92,56,36,0.14)';
+        ctx.fillRect(x + 4, y + 4, 4, 4);
+        break;
+      case 2:
+        ctx.fillStyle = '#5ea838';
+        ctx.fillRect(x, y, TILE, TILE);
+        ctx.fillStyle = '#5c3824';
+        ctx.fillRect(x + 12, y + 20, 8, 10);
+        ctx.fillStyle = '#1e5620';
+        ctx.fillRect(x + 3, y + 3, 26, 20);
+        ctx.fillStyle = '#389e28';
+        ctx.fillRect(x + 5, y + 5, 22, 16);
+        ctx.fillStyle = '#6ee755';
+        ctx.fillRect(x + 8, y + 6, 12, 7);
+        break;
+      case 3:
+        ctx.fillStyle = '#1d7fa8';
+        ctx.fillRect(x, y, TILE, TILE);
+        ctx.fillStyle = '#67d1ff';
+        const waveShift = (animTick % 2) * 6;
+        ctx.fillRect(x + 4 + waveShift, y + 10, 10, 3);
+        ctx.fillRect(x + 14 - waveShift, y + 22, 10, 3);
+        break;
+      case 4:
+        ctx.fillStyle = '#a8764c';
+        ctx.fillRect(x, y, TILE, TILE);
+        ctx.fillStyle = '#7c5130';
+        ctx.fillRect(x, y + 15, TILE, 2);
+        ctx.fillRect(x, y + 30, TILE, 2);
+        break;
+      case 5:
+        ctx.fillStyle = (tx + ty) % 2 === 0 ? '#e5a968' : '#d99a58';
+        ctx.fillRect(x, y, TILE, TILE);
+        break;
+      case 6:
+        ctx.fillStyle = (tx + ty) % 2 === 0 ? '#393254' : '#312b4a';
+        ctx.fillRect(x, y, TILE, TILE);
+        if ((tx + ty) % 4 === 0) {
+          ctx.fillStyle = animTick % 2 === 0 ? 'rgba(56,189,248,0.28)' : 'rgba(217,70,239,0.28)';
+          ctx.fillRect(x + 12, y + 12, 8, 8);
+        }
+        break;
+      case 7:
+        ctx.fillStyle = '#8c583a';
+        ctx.fillRect(x, y, TILE, TILE);
+        ctx.fillStyle = '#c84b31';
+        ctx.fillRect(x, y, TILE, 14);
+        ctx.fillStyle = '#f7efd8';
+        ctx.fillRect(x + 8, y + 18, 16, 10);
+        break;
+      case 8:
+        const b = getBiomeAtTile(tx, ty);
+        if (b === 'harbor') {
+          ctx.fillStyle = '#2b1d14'; ctx.fillRect(x + 2, y + 2, 28, 28);
+          ctx.fillStyle = '#d97706'; ctx.fillRect(x + 4, y + 4, 24, 24);
+          ctx.fillStyle = '#92400e'; ctx.fillRect(x + 6, y + 14, 20, 4);
+        } else if (b === 'market') {
+          ctx.fillStyle = '#2b1d14'; ctx.fillRect(x + 2, y + 2, 28, 28);
+          ctx.fillStyle = (tx % 2 === 0) ? '#e11d48' : '#f59e0b';
+          ctx.fillRect(x + 4, y + 4, 24, 14);
+          ctx.fillStyle = '#f7efd8'; ctx.fillRect(x + 4, y + 18, 24, 10);
+        } else {
+          ctx.fillStyle = '#1e1b2e'; ctx.fillRect(x + 4, y + 2, 24, 28);
+          ctx.fillStyle = '#38bdf8'; ctx.fillRect(x + 10, y + 6, 12, 18);
+          ctx.fillStyle = '#e879f9'; ctx.fillRect(x + 13, y + 10, 6, 8);
+        }
+        break;
+    }
+  }
+
+  function drawRanger(px, py, dir, frame) {
+    const x = Math.round(px), y = Math.round(py);
+    const bob = (frame === 1 || frame === 3) ? -2 : 0;
+    const hasLeafCap = state.owned.includes('m1');
+
+    ctx.fillStyle = 'rgba(0,0,0,0.32)';
+    ctx.fillRect(x - 10, y + 9, 20, 6);
+
+    ctx.fillStyle = '#2b1d14';
+    const legOff = frame === 1 ? -2 : frame === 3 ? 2 : 0;
+    ctx.fillRect(x - 6, y + 5 + legOff, 5, 7);
+    ctx.fillRect(x + 1, y + 5 - legOff, 5, 7);
+
+    ctx.fillStyle = '#2b1d14';
+    ctx.fillRect(x - 9, y - 6 + bob, 18, 13);
+    ctx.fillStyle = '#289e38';
+    ctx.fillRect(x - 7, y - 4 + bob, 14, 9);
+    ctx.fillStyle = '#ffe054';
+    ctx.fillRect(x - 2, y - 4 + bob, 4, 9);
+
+    ctx.fillStyle = '#2b1d14';
+    ctx.fillRect(x - 9, y - 18 + bob, 18, 13);
+    ctx.fillStyle = '#f7c99e';
+    ctx.fillRect(x - 7, y - 15 + bob, 14, 9);
+
+    // Cap (Turns Green Leaf Cap when Bazaar item m1 is owned!)
+    ctx.fillStyle = hasLeafCap ? '#16a34a' : '#e11d48';
+    ctx.fillRect(x - 8, y - 19 + bob, 16, 6);
+    ctx.fillStyle = hasLeafCap ? '#fef08a' : '#fffaf0';
+    ctx.fillRect(x - 3, y - 17 + bob, 6, 2);
+
+    ctx.fillStyle = '#2b1d14';
+    if (dir === 'down') {
+      ctx.fillRect(x - 4, y - 11 + bob, 2, 3);
+      ctx.fillRect(x + 2, y - 11 + bob, 2, 3);
+    } else if (dir === 'left') {
+      ctx.fillRect(x - 6, y - 11 + bob, 2, 3);
+    } else if (dir === 'right') {
+      ctx.fillRect(x + 4, y - 11 + bob, 2, 3);
+    }
+  }
+
+  function drawEnemy(en) {
+    const x = Math.round(en.x), y = Math.round(en.y);
+    const isLt = en.type === 'lieutenant';
+
+    const coneLen = isLt ? 110 : 84;
+    const angles = { right: 0, down: Math.PI / 2, left: Math.PI, up: -Math.PI / 2 };
+    const a = angles[en.dir] || 0;
+    ctx.fillStyle = isLt ? 'rgba(250, 204, 21, 0.22)' : 'rgba(168, 85, 247, 0.22)';
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.arc(x, y, coneLen, a - 0.36, a + 0.36);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillRect(x - 10, y + 9, 20, 6);
+    const bob = Math.floor(en.frame) % 2 === 1 ? -2 : 0;
+    ctx.fillStyle = '#2b1d14';
+    ctx.fillRect(x - 9, y - 16 + bob, 18, 25);
+    ctx.fillStyle = isLt ? '#4c1d95' : '#6b21a8';
+    ctx.fillRect(x - 7, y - 14 + bob, 14, 21);
+    ctx.fillStyle = isLt ? '#facc15' : '#84cc16';
+    ctx.fillRect(x - 6, y - 2 + bob, 12, 5);
+    ctx.fillStyle = '#d9f99d';
+    ctx.fillRect(x - 6, y - 12 + bob, 12, 7);
+    ctx.fillStyle = isLt ? '#f59e0b' : '#18181b';
+    ctx.fillRect(x - 5, y - 10 + bob, 10, 3);
+    if (isLt) {
+      ctx.fillStyle = '#ffe054';
+      ctx.fillRect(x - 6, y - 18 + bob, 12, 4);
+    }
+  }
+
+  function drawMinimap() {
+    const mw = 112, mh = 84;
+    const mx = canvas.width - mw - 10;
+    const my = 10;
+    ctx.fillStyle = '#2b1d14';
+    ctx.fillRect(mx - 3, my - 3, mw + 6, mh + 6);
+
+    ctx.fillStyle = '#6ec244'; ctx.fillRect(mx, my, mw / 2, mh / 2);
+    ctx.fillStyle = '#3898b8'; ctx.fillRect(mx + mw / 2, my, mw / 2, mh / 2);
+    ctx.fillStyle = '#d98a3c'; ctx.fillRect(mx, my + mh / 2, mw / 2, mh / 2);
+    ctx.fillStyle = '#4c4669'; ctx.fillRect(mx + mw / 2, my + mh / 2, mw / 2, mh / 2);
+
+    ctx.fillStyle = '#e3cba0';
+    ctx.fillRect(mx, my + mh / 2 - 2, mw, 4);
+    ctx.fillRect(mx + mw / 2 - 2, my, 4, mh);
+
+    const sx = mw / WORLD_W, sy = mh / WORLD_H;
+
+    ctx.fillStyle = '#38bdf8';
+    QUEST_BOARDS.forEach(q => ctx.fillRect(mx + q.x * sx - 2, my + q.y * sy - 2, 4, 4));
+
+    ctx.fillStyle = '#fef08a';
+    litterDrops.forEach(l => ctx.fillRect(mx + l.x * sx - 1, my + l.y * sy - 1, 2, 2));
+
+    enemies.forEach(e => {
+      ctx.fillStyle = e.type === 'lieutenant' ? '#facc15' : '#ef4444';
+      ctx.fillRect(mx + e.x * sx - 2, my + e.y * sy - 2, 4, 4);
+    });
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(mx + player.x * sx - 3, my + player.y * sy - 3, 6, 6);
+    ctx.fillStyle = '#22c55e';
+    ctx.fillRect(mx + player.x * sx - 2, my + player.y * sy - 2, 4, 4);
+  }
+
+  function render(now) {
+    if (currentTab !== 'world') return;
+    if (canvas.width < 10) resize();
+    ctx.imageSmoothingEnabled = false;
+
+    const cw = canvas.width, ch = canvas.height;
+    const camX = Math.max(0, Math.min(WORLD_W - cw, Math.round(player.x - cw / 2)));
+    const camY = Math.max(0, Math.min(WORLD_H - ch, Math.round(player.y - ch / 2)));
+    const animTick = Math.floor(now / 420);
+
+    ctx.save();
+    ctx.translate(-camX, -camY);
+
+    const startCol = Math.max(0, Math.floor(camX / TILE));
+    const endCol = Math.min(COLS - 1, Math.ceil((camX + cw) / TILE));
+    const startRow = Math.max(0, Math.floor(camY / TILE));
+    const endRow = Math.min(ROWS - 1, Math.ceil((camY + ch) / TILE));
+
+    for (let ty = startRow; ty <= endRow; ty++) {
+      for (let tx = startCol; tx <= endCol; tx++) {
+        drawTile(map[ty][tx], tx * TILE, ty * TILE, tx, ty, animTick);
+      }
+    }
+
+    // Center Crossroad Recycle Monument
+    ctx.fillStyle = '#2b1d14';
+    ctx.fillRect(23 * TILE - 2, 17 * TILE - 2, 36, 36);
+    ctx.fillStyle = '#f7efd8';
+    ctx.fillRect(23 * TILE + 1, 17 * TILE + 1, 30, 30);
+    ctx.font = '18px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('♻️', 23 * TILE + 16, 17 * TILE + 16);
+
+    // Draw Swirling Fast-Travel Portals + Proximity Icon
+    for (const p of PORTALS) {
+      const pulse = Math.sin(now / 220) * 3;
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 16 + pulse, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#e0f2fe';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 10, (now / 300) % (Math.PI * 2), ((now / 300) % (Math.PI * 2)) + 4.2);
+      ctx.stroke();
+
+      if (Math.hypot(p.x - player.x, p.y - player.y) < 58) {
+        ctx.font = '13px sans-serif';
+        ctx.fillText('🌀', p.x, p.y - 22 + Math.sin(now / 180) * 2);
+        ctx.font = '18px sans-serif';
+      }
+    }
+
+    // Draw Quest Boards + Proximity Clipboard Badge
+    for (const qb of QUEST_BOARDS) {
+      ctx.fillStyle = '#2b1d14';
+      ctx.fillRect(qb.x - 15, qb.y - 16, 30, 26);
+      ctx.fillStyle = '#8c583a';
+      ctx.fillRect(qb.x - 13, qb.y - 14, 26, 20);
+      ctx.fillStyle = '#ffe054';
+      ctx.fillRect(qb.x - 9, qb.y - 10, 8, 10);
+      ctx.fillStyle = '#f7efd8';
+      ctx.fillRect(qb.x + 2, qb.y - 9, 8, 9);
+      ctx.fillStyle = '#5c3824';
+      ctx.fillRect(qb.x - 3, qb.y + 8, 6, 8);
+
+      if (Math.hypot(qb.x - player.x, qb.y - player.y) < 58) {
+        ctx.font = '13px sans-serif';
+        ctx.fillText('📋', qb.x, qb.y - 25 + Math.sin(now / 180) * 2);
+        ctx.font = '18px sans-serif';
+      }
+    }
+
+    // Draw Collectible Litter with Category-Colored Glow Rings
+    ctx.font = '18px sans-serif';
+    for (const l of litterDrops) {
+      const catColor = (BIN_BY_ID[l.item.b] || BIN_BY_ID.wet).c;
+      ctx.fillStyle = catColor + '55';
+      ctx.beginPath();
+      ctx.arc(l.x, l.y + 4, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = catColor;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillText(l.item.g, l.x, l.y);
+    }
+
+    // Draw 5 Color-Coded Overworld Waste Bins + Proximity Recycle Badge
+    for (const wb of WORLD_BINS) {
+      ctx.fillStyle = '#2b1d14';
+      ctx.fillRect(wb.x - 11, wb.y - 12, 22, 24);
+      ctx.fillStyle = wb.c;
+      ctx.fillRect(wb.x - 9, wb.y - 10, 18, 20);
+      ctx.fillStyle = '#fffaf0';
+      ctx.fillRect(wb.x - 7, wb.y - 13, 14, 3);
+
+      if (Math.hypot(wb.x - player.x, wb.y - player.y) < 52) {
+        ctx.fillStyle = '#2b1d14';
+        ctx.fillRect(wb.x - 19, wb.y - 28, 38, 12);
+        ctx.fillStyle = '#ffe054';
+        ctx.font = 'bold 8px Silkscreen, monospace';
+        ctx.fillText('♻️ ' + wb.n.slice(0, 3).toUpperCase(), wb.x, wb.y - 22);
+        ctx.font = '18px sans-serif';
+      }
+    }
+
+    // Draw Dust Particles
+    ctx.fillStyle = 'rgba(255, 248, 230, 0.7)';
+    for (const d of dustParticles) {
+      ctx.fillRect(d.x - 3, d.y - 3, 6, 6);
+    }
+
+    // Draw NPCs + Floating Speech Badge
+    for (const npc of NPCS) {
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.fillRect(npc.x - 10, npc.y + 9, 20, 6);
+      ctx.fillStyle = '#2b1d14';
+      ctx.fillRect(npc.x - 9, npc.y - 16, 18, 25);
+      ctx.fillStyle = npc.color;
+      ctx.fillRect(npc.x - 7, npc.y - 4, 14, 11);
+      ctx.fillStyle = '#f7c99e';
+      ctx.fillRect(npc.x - 7, npc.y - 14, 14, 10);
+      ctx.fillStyle = npc.hat;
+      ctx.fillRect(npc.x - 8, npc.y - 18, 16, 5);
+      ctx.fillStyle = '#2b1d14';
+      ctx.fillRect(npc.x - 4, npc.y - 10, 2, 3);
+      ctx.fillRect(npc.x + 2, npc.y - 10, 2, 3);
+
+      if (Math.hypot(npc.x - player.x, npc.y - player.y) < 58) {
+        ctx.font = '13px sans-serif';
+        ctx.fillText('💬', npc.x, npc.y - 26 + Math.sin(now / 180) * 2);
+        ctx.font = '18px sans-serif';
+      }
+    }
+
+    // Draw Tap-to-Walk Destination Marker
+    if (player.targetX !== null && player.targetY !== null) {
+      ctx.strokeStyle = '#ffe054';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(player.targetX, player.targetY, 7 + Math.sin(now / 140) * 2, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Draw Golden Sprout Companion Pet if owned (m6)
+    if (state.owned.includes('m6')) {
+      const pbob = Math.sin(now / 160) * 2;
+      ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      ctx.fillRect(pet.x - 6, pet.y + 5, 12, 4);
+      ctx.fillStyle = '#2b1d14';
+      ctx.fillRect(pet.x - 6, pet.y - 6 + pbob, 12, 12);
+      ctx.fillStyle = '#ffe054';
+      ctx.fillRect(pet.x - 4, pet.y - 4 + pbob, 8, 8);
+      ctx.fillStyle = '#46b832';
+      ctx.fillRect(pet.x - 2, pet.y - 9 + pbob, 4, 4);
+    }
+
+    // Draw Patrolling Enemies
+    for (const en of enemies) drawEnemy(en);
+
+    // Draw Player (Flashes with pulsing stealth aura during 3.5s post-flee shield)
+    const isShielded = now < player.fleeShieldUntil;
+    if (isShielded) {
+      ctx.strokeStyle = 'rgba(103, 209, 255, 0.85)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, 18 + Math.sin(now / 90) * 3, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    if (!isShielded || Math.floor(now / 90) % 2 === 0) {
+      drawRanger(player.x, player.y, player.dir, player.frame);
+    }
+
+    // Draw Carried Trash Item Floating Overhead
+    if (player.carriedItem) {
+      ctx.font = '18px sans-serif';
+      ctx.fillText(player.carriedItem.g, player.x, player.y - 28 + Math.sin(now / 150) * 2);
+    }
+
+    // Draw Floating Pickup Texts
+    ctx.font = 'bold 11px Silkscreen, monospace';
+    for (const f of worldFloats) {
+      ctx.fillStyle = '#2b1d14';
+      ctx.fillText(f.text, f.x + 1, f.y + 1);
+      ctx.fillStyle = '#ffe054';
+      ctx.fillText(f.text, f.x, f.y);
+    }
+
+    ctx.restore();
+
+    drawMinimap();
+  }
+
+  function frameLoop(now) {
+    update(now);
+    render(now);
+    requestAnimationFrame(frameLoop);
+  }
+
+  window.addEventListener('keydown', e => {
+    if (e.target.matches('input, textarea, select')) return;
+    if (!$('#settings').classList.contains('hidden')) return;
+    if (!$('#onboard').classList.contains('hidden')) return;
+    if (!$('#resetModal').classList.contains('hidden')) return;
+    if (EcoCam.active) return;
+
+    keys[e.code] = true;
+    if (currentTab === 'world') {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
+        e.preventDefault();
+      }
+      if (e.code === 'Space' || e.code === 'Enter' || e.code === 'KeyE') {
+        interact();
+      }
+    }
+  });
+  window.addEventListener('keyup', e => { keys[e.code] = false; });
+
+  // Mobile D-Pad & Action Buttons
+  $$('.dpad-btn').forEach(btn => {
+    const dir = btn.dataset.dir;
+    const onDown = e => { e.preventDefault(); touchDir[dir] = true; btn.classList.add('pressed'); };
+    const onUp = () => { touchDir[dir] = false; btn.classList.remove('pressed'); };
+    btn.addEventListener('pointerdown', onDown);
+    btn.addEventListener('pointerup', onUp);
+    btn.addEventListener('pointerleave', onUp);
+    btn.addEventListener('pointercancel', onUp);
+  });
+
+  const sprintBtn = $('#btnSprint');
+  sprintBtn.addEventListener('pointerdown', e => { e.preventDefault(); touchDir.sprint = true; });
+  sprintBtn.addEventListener('pointerup', () => { touchDir.sprint = false; });
+  sprintBtn.addEventListener('pointerleave', () => { touchDir.sprint = false; });
+
+  $('#btnInteract').addEventListener('click', interact);
+
+  // Tap-to-Walk directly on Overworld Canvas
+  canvas.addEventListener('pointerdown', e => {
+    if (currentTab !== 'world' || pausedForEncounter || EcoCam.active) return;
+    if (dialogueOpen) {
+      interact();
+      return;
+    }
+    const rect = canvas.getBoundingClientRect();
+    const cw = canvas.width, ch = canvas.height;
+    const camX = Math.max(0, Math.min(WORLD_W - cw, Math.round(player.x - cw / 2)));
+    const camY = Math.max(0, Math.min(WORLD_H - ch, Math.round(player.y - ch / 2)));
+    const wx = (e.clientX - rect.left) * (cw / rect.width) + camX;
+    const wy = (e.clientY - rect.top) * (ch / rect.height) + camY;
+    player.targetX = Math.max(TILE, Math.min(WORLD_W - TILE, wx));
+    player.targetY = Math.max(TILE, Math.min(WORLD_H - TILE, wy));
+  });
+
+  function resetPosition() {
+    player.x = 11 * TILE + 16;
+    player.y = 11 * TILE + 16;
+    player.carriedItem = null;
+    player.targetX = null;
+    player.targetY = null;
+    updateCarryUI();
+    state.playerX = player.x;
+    state.playerY = player.y;
+    enemies = [];
+    syncWaveEnemies();
+  }
+
+  resize();
+  requestAnimationFrame(frameLoop);
+
+  return { resize, syncWaveEnemies, defeatEnemy, resumeFromEncounter, resetPosition, get player() { return player; } };
+})();
+
+/* =========================================================
+   SORT BLITZ KEYBOARD SHORTCUTS (1–5) & INITIALIZATION
+   ========================================================= */
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input, textarea, select')) return;
+  if (!/^[1-5]$/.test(e.key)) return;
+  if (!$('#settings').classList.contains('hidden')) return;
+  if (!$('#onboard').classList.contains('hidden')) return;
+  if (!$('#resetModal').classList.contains('hidden')) return;
+  if ($('.panel[data-panel="sort"]').hidden) return;
+  e.preventDefault();
+  sort(BINS[Number(e.key) - 1].id);
+});
+
+mountBins();
+initBiomes();
+initScanner();
+initOnboard();
+initSettings();
+initDrag();
+renderHUD();
+renderQueue();
+renderDesk();
+renderLoot();
+renderScore();
+updateTimer(60000);
+
+$('#startBtn').addEventListener('click', () => {
+  encounterCleanup.active = false;
+  hide($('#cleanupBanner'));
+  startRound(60000);
+});
+$('#againBtn').addEventListener('click', () => {
+  encounterCleanup.active = false;
+  hide($('#cleanupBanner'));
+  startRound(60000);
+});
+$('#closeEnd').addEventListener('click', () => {
+  if (encounterCleanup.active) exitSortToWorldMap();
+  else hide($('#endPanel'));
+});
+$('#returnWorldBtn').addEventListener('click', exitSortToWorldMap);
+$('#exitSortTopBtn').addEventListener('click', exitSortToWorldMap);
+$('#idleExitMapBtn').addEventListener('click', exitSortToWorldMap);
+$('#activeExitMapBtn').addEventListener('click', exitSortToWorldMap);
+
+window.CycleSquad = {
+  syncToBackend,
+  placeBid,
+  get state() { return state; },
+  get round() { return G; },
+  get active() { return active; },
+  get overworld() { return window.Overworld; }
+};
+</script>
+</body>
+</html>
