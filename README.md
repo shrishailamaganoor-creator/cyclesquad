@@ -1,6 +1,6 @@
-# 🚲 CycleSquad — Open-World Pixels Sustainability RPG
+# 🌍 Earth Heroes — Open-World Pixels Sustainability RPG
 
-> **CycleSquad** is an endless Pokémon FireRed-style open-world pixel-art sustainability RPG and waste-sorting arcade game built directly in HTML5 Canvas, Tailwind CSS, and Web Audio API.
+> **Earth Heroes** is an endless Pokémon FireRed-style open-world pixel-art sustainability RPG and waste-sorting arcade game built directly in HTML5 Canvas, Tailwind CSS, and Web Audio API.
 
 🌐 **Live Demo:** [https://shrishailamaganoor-creator.github.io/cyclesquad/](https://shrishailamaganoor-creator.github.io/cyclesquad/)
 
@@ -30,7 +30,7 @@
 
 ## 🚀 Running Locally
 
-No build tools, npm packages, or server runtimes required! CycleSquad is 100% self-contained:
+No build tools, npm packages, or server runtimes required! Earth Heroes is 100% self-contained:
 
 1. Clone the repository:
    ```bash

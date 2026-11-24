@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CycleSquad — Open-World Pixels Sustainability RPG</title>
-<meta name="description" content="CycleSquad — an endless Pokémon FireRed-style open-world pixel-art sustainability RPG and waste-sorting arcade game." />
+<title>Earth Heroes — Open-World Pixels Sustainability RPG</title>
+<meta name="description" content="Earth Heroes — an endless Pokémon FireRed-style open-world pixel-art sustainability RPG and waste-sorting arcade game." />
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -381,7 +381,7 @@
 
         <div class="flex flex-col gap-0.5 sm:gap-1">
           <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-            <span class="font-pixel text-[10px] sm:text-sm text-[#fff8e7] drop-shadow-[2px_2px_0_#2b1d14]">CycleSquad</span>
+            <span class="font-pixel text-[10px] sm:text-sm text-[#fff8e7] drop-shadow-[2px_2px_0_#2b1d14]">Earth Heroes</span>
             <span id="hudPlayerPill" class="hidden sm:inline-block rounded-md border-2 border-[#2b1d14] bg-[#f7efd8] px-2 py-0.5 font-silk text-[11px] font-bold text-[#2b1d14]">
               RANGER • <span class="text-[#238219]">GreenWardens</span>
             </span>
@@ -439,7 +439,7 @@
     </div>
 
     <!-- PIXELS RPG WOODEN TABS (World Map Default!) -->
-    <nav class="mt-1.5 sm:mt-2.5 flex gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar px-0.5" aria-label="CycleSquad Open-World Tabs">
+    <nav class="mt-1.5 sm:mt-2.5 flex gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar px-0.5" aria-label="Earth Heroes Open-World Tabs">
       <button class="rpg-tab" data-tab="world" aria-selected="true">🗺️ 1. World Map</button>
       <button class="rpg-tab" data-tab="sort" aria-selected="false">🌱 2. Sort Blitz</button>
       <button class="rpg-tab" data-tab="camera" aria-selected="false">📷 3. AI Field Lens</button>
@@ -1054,7 +1054,7 @@
     <div class="flex items-center gap-3 border-b-2 border-[#d2be94] pb-3">
       <div class="grid h-11 w-11 place-items-center rounded-xl border-[3px] border-[#2b1d14] bg-[#6ee755] text-xl shadow-[0_3px_0_#2b1d14]">♻️</div>
       <div>
-        <p class="font-pixel text-xs text-[#2b1d14]">WELCOME TO CYCLESQUAD</p>
+        <p class="font-pixel text-xs text-[#2b1d14]">WELCOME TO EARTH HEROES</p>
         <p class="font-silk text-xs font-bold text-[#5c3824]">Create your Open-World Eco-Ranger</p>
       </div>
     </div>
@@ -1116,14 +1116,15 @@
 <div id="toastHost" class="pointer-events-none fixed inset-x-0 bottom-5 z-[60] flex flex-col items-center gap-1.5"></div>
 
 <footer class="py-3 text-center font-silk text-xs font-bold text-[#fff8e7] drop-shadow-[2px_2px_0_#2b1d14]">
-  CycleSquad • Endless Open-World Sustainability RPG • WASD / Arrows + Keys 1–5
+  Earth Heroes • Endless Open-World Sustainability RPG • WASD / Arrows + Keys 1–5
 </footer>
 
 <script>
 'use strict';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-const KEY = 'cyclesquad.openworld.v1';
+const KEY = 'earthheroes.openworld.v1';
+const LEGACY_KEY = 'cyclesquad.openworld.v1';
 const SQUADS = ['GreenWardens', 'TerraRangers', 'OceanKeepers', 'SolarNomads', 'CyberRecyclers'];
 const dayKey = () => new Date().toDateString();
 
@@ -1624,7 +1625,7 @@ const blank = () => ({
 
 let state = (() => {
   try {
-    const raw = JSON.parse(localStorage.getItem(KEY) || 'null');
+    const raw = JSON.parse(localStorage.getItem(KEY) || localStorage.getItem(LEGACY_KEY) || 'null');
     if (!raw || typeof raw !== 'object') return blank();
     const s = Object.assign(blank(), raw);
     if (s.scansDate !== dayKey()) { s.scansDate = dayKey(); s.scans = 5; }
@@ -2208,7 +2209,7 @@ function initSettings() {
   });
   $('#cancelResetBtn').addEventListener('click', () => hide($('#resetModal')));
   $('#confirmResetBtn').addEventListener('click', () => {
-    try { localStorage.removeItem(KEY); } catch {}
+    try { localStorage.removeItem(KEY); localStorage.removeItem(LEGACY_KEY); } catch {}
     state = blank();
     state.onboarded = false;
     save();
@@ -2593,7 +2594,7 @@ function initDrag() {
   const hand = $('#handActor');
   hand.addEventListener('dragstart', e => {
     if (!G.on || !active || G.animating) { e.preventDefault(); return; }
-    e.dataTransfer.setData('text/plain', 'cyclesquad-item');
+    e.dataTransfer.setData('text/plain', 'earthheroes-item');
     e.dataTransfer.effectAllowed = 'move';
   });
   hand.addEventListener('dragend', () => $$('.inv-slot').forEach(b => b.classList.remove('over')));
@@ -3046,7 +3047,7 @@ window.Overworld = (() => {
     {
       id: 'marina', name: 'CAPT. MARINA', x: 34 * TILE + 16, y: 9 * TILE + 16, color: '#0284c7', hat: '#ffe054',
       lines: [
-        'Ahoy! Neon Harbor stays clean thanks to CycleSquad.',
+        'Ahoy! Neon Harbor stays clean thanks to Earth Heroes.',
         'Watch out for Gold-Visor Sludge Lieutenants in Wave 2+ — or hit FLEE in Eco-Cam to activate a 3.5s stealth shield!'
       ]
     },
@@ -4176,7 +4177,7 @@ $('#exitSortTopBtn').addEventListener('click', exitSortToWorldMap);
 $('#idleExitMapBtn').addEventListener('click', exitSortToWorldMap);
 $('#activeExitMapBtn').addEventListener('click', exitSortToWorldMap);
 
-window.CycleSquad = {
+window.EarthHeroes = window.CycleSquad = {
   syncToBackend,
   placeBid,
   get state() { return state; },
